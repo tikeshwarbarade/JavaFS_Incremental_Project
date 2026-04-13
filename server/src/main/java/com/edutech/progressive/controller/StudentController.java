@@ -58,7 +58,8 @@ public class StudentController {
     @DeleteMapping("/{studentId}")
     public ResponseEntity<Void> deleteStudent(@PathVariable int studentId) {
         jdbcService.deleteStudent(studentId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
+    
     }
 
     // GET /student/fromArrayList

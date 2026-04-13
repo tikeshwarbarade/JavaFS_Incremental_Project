@@ -2,7 +2,17 @@ package com.edutech.progressive.entity;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+import org.hibernate.annotations.GeneratorType;
+
+@Entity
 public class Student implements Comparable<Student> {
+  @Id
+  @GeneratedValue(strategy=GenerationType.IDENTITY)
   private int studentId;
   private String fullName;
   private Date dateOfBirth;
