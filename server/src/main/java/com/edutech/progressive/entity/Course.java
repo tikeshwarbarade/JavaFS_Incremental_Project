@@ -5,14 +5,26 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import javax.persistence.*;
+
 @Entity
+@Table(name = "course")
 public class Course {
+
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int courseId;
+
     private String courseName;
     private String description;
-    private int teacherId;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "teacher_id")
+    @JsonBackReference
+    private Teacher teacher;
 
     public Course() {
     }
@@ -21,7 +33,7 @@ public class Course {
         this.courseId = courseId;
         this.courseName = courseName;
         this.description = description;
-        this.teacherId = teacherId;
+        setTeacherId(teacherId);
     }
 
     public int getCourseId() {
@@ -48,13 +60,25 @@ public class Course {
         this.description = description;
     }
 
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
+
+    // Compatibility helper for old code/tests
+    @Transient
     public int getTeacherId() {
-        return teacherId;
+        return (teacher != null) ? teacher.getTeacherId() : 0;
     }
 
+    // Compatibility helper for old code/tests
     public void setTeacherId(int teacherId) {
-        this.teacherId = teacherId;
+        if (this.teacher == null) {
+            this.teacher = new Teacher();
+        }
+        this.teacher.setTeacherId(teacherId);
     }
-    
-
 }
