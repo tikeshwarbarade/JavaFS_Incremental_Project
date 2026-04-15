@@ -26,6 +26,15 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
+import com.edutech.progressive.config.DatabaseConnectionManager;
+import com.edutech.progressive.entity.Course;
+import com.edutech.progressive.entity.Teacher;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class CourseDAOImpl implements CourseDAO {
 
     @Override

@@ -11,6 +11,13 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "teacher")
 public class Teacher implements Comparable<Teacher> {

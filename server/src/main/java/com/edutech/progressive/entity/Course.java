@@ -10,6 +10,11 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import javax.persistence.*;
+
 @Entity
 @Table(name = "course")
 public class Course {
@@ -68,13 +73,13 @@ public class Course {
         this.teacher = teacher;
     }
 
-    // Compatibility helper for old code/tests
+    // Compatibility helper for older code/tests
     @Transient
     public int getTeacherId() {
         return (teacher != null) ? teacher.getTeacherId() : 0;
     }
 
-    // Compatibility helper for old code/tests
+    // Compatibility helper for older code/tests
     public void setTeacherId(int teacherId) {
         if (this.teacher == null) {
             this.teacher = new Teacher();
