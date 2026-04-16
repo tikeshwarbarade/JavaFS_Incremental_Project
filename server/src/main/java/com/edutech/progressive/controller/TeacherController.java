@@ -1,15 +1,11 @@
 package com.edutech.progressive.controller;
 
 import com.edutech.progressive.entity.Teacher;
-import org.springframework.http.ResponseEntity;
-
-import java.util.List;
-
-
-import com.edutech.progressive.entity.Teacher;
+import com.edutech.progressive.exception.TeacherAlreadyExistsException;
 import com.edutech.progressive.service.impl.TeacherServiceImplJpa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,41 +19,68 @@ public class TeacherController {
 
     // GET /teacher
     @GetMapping
-    public List<Teacher> getAllTeachers() {
-        return teacherServiceImplJpa.getAllTeachers();
+    public ResponseEntity<List<Teacher>> getAllTeachers() {
+        try {
+            return ResponseEntity.ok(teacherServiceImplJpa.getAllTeachers());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     // GET /teacher/{teacherId}
     @GetMapping("/{teacherId}")
-    public Teacher getTeacherById(@PathVariable int teacherId) {
-        return teacherServiceImplJpa.getTeacherById(teacherId);
+    public ResponseEntity<Teacher> getTeacherById(@PathVariable int teacherId) {
+        try {
+            return ResponseEntity.ok(teacherServiceImplJpa.getTeacherById(teacherId));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     // POST /teacher
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Integer addTeacher(@RequestBody Teacher teacher) {
-        return teacherServiceImplJpa.addTeacher(teacher);
+    public ResponseEntity<Integer> addTeacher(@RequestBody Teacher teacher) {
+        try {
+            return new ResponseEntity<>(teacherServiceImplJpa.addTeacher(teacher), HttpStatus.CREATED);
+        } catch (TeacherAlreadyExistsException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     // PUT /teacher/{teacherId}
     @PutMapping("/{teacherId}")
-    @ResponseStatus(HttpStatus.OK)
-    public void updateTeacher(@PathVariable int teacherId, @RequestBody Teacher teacher) {
-        teacher.setTeacherId(teacherId);
-        teacherServiceImplJpa.updateTeacher(teacher);
+    public ResponseEntity<Void> updateTeacher(@PathVariable int teacherId, @RequestBody Teacher teacher) {
+        try {
+            teacher.setTeacherId(teacherId);
+            teacherServiceImplJpa.updateTeacher(teacher);
+            return ResponseEntity.ok().build();
+        } catch (TeacherAlreadyExistsException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     // DELETE /teacher/{teacherId}
     @DeleteMapping("/{teacherId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteTeacher(@PathVariable int teacherId) {
-        teacherServiceImplJpa.deleteTeacher(teacherId);
+    public ResponseEntity<Void> deleteTeacher(@PathVariable int teacherId) {
+        try {
+            teacherServiceImplJpa.deleteTeacher(teacherId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     // GET /teacher/yearsofexperience
     @GetMapping("/yearsofexperience")
-    public List<Teacher> getTeacherSortedByYearsOfExperience() {
-        return teacherServiceImplJpa.getTeacherSortedByExperience();
+    public ResponseEntity<List<Teacher>> getTeacherSortedByYearsOfExperience() {
+        try {
+            return ResponseEntity.ok(teacherServiceImplJpa.getTeacherSortedByExperience());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

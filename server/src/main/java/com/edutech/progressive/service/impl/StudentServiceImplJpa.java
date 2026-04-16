@@ -3,24 +3,27 @@ package com.edutech.progressive.service.impl;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.edutech.progressive.dto.StudentDTO;
 import com.edutech.progressive.entity.Student;
+import com.edutech.progressive.exception.StudentAlreadyExistsException;
 import com.edutech.progressive.repository.StudentRepository;
 import com.edutech.progressive.service.StudentService;
 
 @Service
 public class StudentServiceImplJpa implements StudentService {
 
+    @Autowired
     private StudentRepository studentRepository;
 
-    // ✅ Used by DaySixTest
+    // used by tests
     public StudentServiceImplJpa(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
-    // ✅ Used by Spring
+    // used by Spring
     public StudentServiceImplJpa() {
     }
 
@@ -31,19 +34,29 @@ public class StudentServiceImplJpa implements StudentService {
 
     @Override
     public Integer addStudent(Student student) {
+        Student existingStudent = studentRepository.findByEmail(student.getEmail());
+        if (existingStudent != null) {
+            throw new StudentAlreadyExistsException("Student with this email already exists");
+        }
+
         Student savedStudent = studentRepository.save(student);
         return savedStudent.getStudentId();
     }
 
     @Override
     public List<Student> getAllStudentSortedByName() {
-        List<Student> list = studentRepository.findAll();
-        Collections.sort(list);
-        return list;
+        List<Student> students = studentRepository.findAll();
+        Collections.sort(students);
+        return students;
     }
 
     @Override
     public void updateStudent(Student student) {
+        Student existingStudent = studentRepository.findByEmail(student.getEmail());
+        if (existingStudent != null && existingStudent.getStudentId() != student.getStudentId()) {
+            throw new StudentAlreadyExistsException("Another student with this email already exists");
+        }
+
         studentRepository.save(student);
     }
 
@@ -59,6 +72,6 @@ public class StudentServiceImplJpa implements StudentService {
 
     @Override
     public void modifyStudentDetails(StudentDTO studentDTO) {
-        // Not required until Day‑13
+        // not required yet
     }
 }

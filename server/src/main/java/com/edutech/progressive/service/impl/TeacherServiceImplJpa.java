@@ -1,25 +1,7 @@
 package com.edutech.progressive.service.impl;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.edutech.progressive.entity.Teacher;
-import com.edutech.progressive.repository.TeacherRepository;
-
-
-import com.edutech.progressive.entity.Teacher;
-import com.edutech.progressive.repository.TeacherRepository;
-import com.edutech.progressive.service.TeacherService;
-import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.List;
-
-
-import com.edutech.progressive.entity.Teacher;
+import com.edutech.progressive.exception.TeacherAlreadyExistsException;
 import com.edutech.progressive.repository.CourseRepository;
 import com.edutech.progressive.repository.TeacherRepository;
 import com.edutech.progressive.service.TeacherService;
@@ -38,18 +20,17 @@ public class TeacherServiceImplJpa implements TeacherService {
     @Autowired
     private CourseRepository courseRepository;
 
-    // Used by tests
+    // used by tests
     public TeacherServiceImplJpa(TeacherRepository teacherRepository) {
         this.teacherRepository = teacherRepository;
     }
 
-    // Used by tests if both repositories are passed
     public TeacherServiceImplJpa(TeacherRepository teacherRepository, CourseRepository courseRepository) {
         this.teacherRepository = teacherRepository;
         this.courseRepository = courseRepository;
     }
 
-    // Used by Spring
+    // used by Spring
     public TeacherServiceImplJpa() {
     }
 
@@ -60,6 +41,11 @@ public class TeacherServiceImplJpa implements TeacherService {
 
     @Override
     public Integer addTeacher(Teacher teacher) {
+        Teacher existingTeacher = teacherRepository.findByEmail(teacher.getEmail());
+        if (existingTeacher != null) {
+            throw new TeacherAlreadyExistsException("Teacher with this email already exists");
+        }
+
         Teacher savedTeacher = teacherRepository.save(teacher);
         return savedTeacher.getTeacherId();
     }
@@ -73,6 +59,11 @@ public class TeacherServiceImplJpa implements TeacherService {
 
     @Override
     public void updateTeacher(Teacher teacher) {
+        Teacher existingTeacher = teacherRepository.findByEmail(teacher.getEmail());
+        if (existingTeacher != null && existingTeacher.getTeacherId() != teacher.getTeacherId()) {
+            throw new TeacherAlreadyExistsException("Another teacher with this email already exists");
+        }
+
         teacherRepository.save(teacher);
     }
 
