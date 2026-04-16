@@ -3,6 +3,7 @@ package com.edutech.progressive.service.impl;
 import com.edutech.progressive.entity.Course;
 import com.edutech.progressive.exception.CourseAlreadyExistsException;
 import com.edutech.progressive.exception.CourseNotFoundException;
+import com.edutech.progressive.repository.AttendanceRepository;
 import com.edutech.progressive.repository.CourseRepository;
 import com.edutech.progressive.repository.EnrollmentRepository;
 import com.edutech.progressive.service.CourseService;
@@ -20,14 +21,26 @@ public class CourseServiceImplJpa implements CourseService {
     @Autowired
     private EnrollmentRepository enrollmentRepository;
 
+    @Autowired
+    private AttendanceRepository attendanceRepository;
+
     // Used by tests
     public CourseServiceImplJpa(CourseRepository courseRepository) {
         this.courseRepository = courseRepository;
     }
 
-    public CourseServiceImplJpa(CourseRepository courseRepository, EnrollmentRepository enrollmentRepository) {
+    public CourseServiceImplJpa(CourseRepository courseRepository,
+                                EnrollmentRepository enrollmentRepository) {
         this.courseRepository = courseRepository;
         this.enrollmentRepository = enrollmentRepository;
+    }
+
+    public CourseServiceImplJpa(CourseRepository courseRepository,
+                                EnrollmentRepository enrollmentRepository,
+                                AttendanceRepository attendanceRepository) {
+        this.courseRepository = courseRepository;
+        this.enrollmentRepository = enrollmentRepository;
+        this.attendanceRepository = attendanceRepository;
     }
 
     // Used by Spring
@@ -77,8 +90,13 @@ public class CourseServiceImplJpa implements CourseService {
     @Override
     public void deleteCourse(int courseId) {
         Course existingCourse = courseRepository.findByCourseId(courseId);
+
         if (existingCourse == null) {
             throw new CourseNotFoundException("Course not found with id: " + courseId);
+        }
+
+        if (attendanceRepository != null) {
+            attendanceRepository.deleteByCourse_CourseId(courseId);
         }
 
         if (enrollmentRepository != null) {

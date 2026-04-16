@@ -2,6 +2,7 @@ package com.edutech.progressive.service.impl;
 
 import com.edutech.progressive.entity.Teacher;
 import com.edutech.progressive.exception.TeacherAlreadyExistsException;
+import com.edutech.progressive.repository.AttendanceRepository;
 import com.edutech.progressive.repository.CourseRepository;
 import com.edutech.progressive.repository.EnrollmentRepository;
 import com.edutech.progressive.repository.TeacherRepository;
@@ -24,22 +25,39 @@ public class TeacherServiceImplJpa implements TeacherService {
     @Autowired
     private EnrollmentRepository enrollmentRepository;
 
+    @Autowired
+    private AttendanceRepository attendanceRepository;
+
+    // Used by tests
     public TeacherServiceImplJpa(TeacherRepository teacherRepository) {
         this.teacherRepository = teacherRepository;
     }
 
-    public TeacherServiceImplJpa(TeacherRepository teacherRepository, CourseRepository courseRepository) {
+    public TeacherServiceImplJpa(TeacherRepository teacherRepository,
+                                 CourseRepository courseRepository) {
         this.teacherRepository = teacherRepository;
         this.courseRepository = courseRepository;
     }
 
-    public TeacherServiceImplJpa(TeacherRepository teacherRepository, CourseRepository courseRepository,
+    public TeacherServiceImplJpa(TeacherRepository teacherRepository,
+                                 CourseRepository courseRepository,
                                  EnrollmentRepository enrollmentRepository) {
         this.teacherRepository = teacherRepository;
         this.courseRepository = courseRepository;
         this.enrollmentRepository = enrollmentRepository;
     }
 
+    public TeacherServiceImplJpa(TeacherRepository teacherRepository,
+                                 CourseRepository courseRepository,
+                                 EnrollmentRepository enrollmentRepository,
+                                 AttendanceRepository attendanceRepository) {
+        this.teacherRepository = teacherRepository;
+        this.courseRepository = courseRepository;
+        this.enrollmentRepository = enrollmentRepository;
+        this.attendanceRepository = attendanceRepository;
+    }
+
+    // Used by Spring
     public TeacherServiceImplJpa() {
     }
 
@@ -78,6 +96,10 @@ public class TeacherServiceImplJpa implements TeacherService {
 
     @Override
     public void deleteTeacher(int teacherId) {
+        if (attendanceRepository != null) {
+            attendanceRepository.deleteByCourse_Teacher_TeacherId(teacherId);
+        }
+
         if (enrollmentRepository != null) {
             enrollmentRepository.deleteByCourse_Teacher_TeacherId(teacherId);
         }
