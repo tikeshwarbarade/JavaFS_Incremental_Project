@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.edutech.progressive.dto.StudentDTO;
 import com.edutech.progressive.entity.Student;
 import com.edutech.progressive.exception.StudentAlreadyExistsException;
+import com.edutech.progressive.repository.EnrollmentRepository;
 import com.edutech.progressive.repository.StudentRepository;
 import com.edutech.progressive.service.StudentService;
 
@@ -18,12 +19,18 @@ public class StudentServiceImplJpa implements StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
-    // used by tests
+    @Autowired
+    private EnrollmentRepository enrollmentRepository;
+
     public StudentServiceImplJpa(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
-    // used by Spring
+    public StudentServiceImplJpa(StudentRepository studentRepository, EnrollmentRepository enrollmentRepository) {
+        this.studentRepository = studentRepository;
+        this.enrollmentRepository = enrollmentRepository;
+    }
+
     public StudentServiceImplJpa() {
     }
 
@@ -62,6 +69,9 @@ public class StudentServiceImplJpa implements StudentService {
 
     @Override
     public void deleteStudent(int studentId) {
+        if (enrollmentRepository != null) {
+            enrollmentRepository.deleteByStudent_StudentId(studentId);
+        }
         studentRepository.deleteById(studentId);
     }
 
@@ -72,6 +82,6 @@ public class StudentServiceImplJpa implements StudentService {
 
     @Override
     public void modifyStudentDetails(StudentDTO studentDTO) {
-        // not required yet
+        // not implemented yet
     }
 }

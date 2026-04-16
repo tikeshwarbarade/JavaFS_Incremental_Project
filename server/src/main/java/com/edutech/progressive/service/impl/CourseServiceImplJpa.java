@@ -4,6 +4,7 @@ import com.edutech.progressive.entity.Course;
 import com.edutech.progressive.exception.CourseAlreadyExistsException;
 import com.edutech.progressive.exception.CourseNotFoundException;
 import com.edutech.progressive.repository.CourseRepository;
+import com.edutech.progressive.repository.EnrollmentRepository;
 import com.edutech.progressive.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,12 +17,20 @@ public class CourseServiceImplJpa implements CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
-    // used by tests
+    @Autowired
+    private EnrollmentRepository enrollmentRepository;
+
+    // Used by tests
     public CourseServiceImplJpa(CourseRepository courseRepository) {
         this.courseRepository = courseRepository;
     }
 
-    // used by Spring
+    public CourseServiceImplJpa(CourseRepository courseRepository, EnrollmentRepository enrollmentRepository) {
+        this.courseRepository = courseRepository;
+        this.enrollmentRepository = enrollmentRepository;
+    }
+
+    // Used by Spring
     public CourseServiceImplJpa() {
     }
 
@@ -57,8 +66,8 @@ public class CourseServiceImplJpa implements CourseService {
             throw new CourseNotFoundException("Course not found with id: " + course.getCourseId());
         }
 
-        Course sameNameCourse = courseRepository.findByCourseName(course.getCourseName());
-        if (sameNameCourse != null && sameNameCourse.getCourseId() != course.getCourseId()) {
+        Course duplicateCourse = courseRepository.findByCourseName(course.getCourseName());
+        if (duplicateCourse != null && duplicateCourse.getCourseId() != course.getCourseId()) {
             throw new CourseAlreadyExistsException("Another course with this name already exists");
         }
 
@@ -70,6 +79,10 @@ public class CourseServiceImplJpa implements CourseService {
         Course existingCourse = courseRepository.findByCourseId(courseId);
         if (existingCourse == null) {
             throw new CourseNotFoundException("Course not found with id: " + courseId);
+        }
+
+        if (enrollmentRepository != null) {
+            enrollmentRepository.deleteByCourse_CourseId(courseId);
         }
 
         courseRepository.deleteById(courseId);
