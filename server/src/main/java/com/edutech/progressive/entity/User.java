@@ -11,7 +11,7 @@ public class User {
     @Column(name = "user_id")
     private int userId;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "username", length = 100, unique = true, nullable = false)
     private String username;
 
     @Column(nullable = false)
@@ -22,6 +22,12 @@ public class User {
 
     @Column(name = "reference_id")
     private Integer referenceId;
+
+    @Column(name = "student_id")
+    private Integer studentId;
+
+    @Column(name = "teacher_id")
+    private Integer teacherId;
 
     @Transient
     private String token;
@@ -48,8 +54,10 @@ public class User {
 
         if (student != null) {
             this.referenceId = student.getStudentId();
+            this.studentId = student.getStudentId();
         } else if (teacher != null) {
             this.referenceId = teacher.getTeacherId();
+            this.teacherId = teacher.getTeacherId();
         }
     }
 
@@ -94,6 +102,24 @@ public class User {
         this.referenceId = referenceId;
     }
 
+    public Integer getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Integer studentId) {
+        this.studentId = studentId;
+        this.referenceId = studentId;
+    }
+
+    public Integer getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(Integer teacherId) {
+        this.teacherId = teacherId;
+        this.referenceId = teacherId;
+    }
+
     // helper/token fields
     public String getToken() {
         return token;
@@ -120,6 +146,7 @@ public class User {
         this.student = student;
         if (student != null) {
             this.referenceId = student.getStudentId();
+            this.studentId = student.getStudentId();
         }
     }
 
@@ -131,6 +158,7 @@ public class User {
         this.teacher = teacher;
         if (teacher != null) {
             this.referenceId = teacher.getTeacherId();
+            this.teacherId = teacher.getTeacherId();
         }
     }
 }

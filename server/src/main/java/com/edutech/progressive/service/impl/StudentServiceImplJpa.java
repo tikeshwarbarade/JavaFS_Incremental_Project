@@ -4,14 +4,17 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.edutech.progressive.dto.StudentDTO;
 import com.edutech.progressive.entity.Student;
+import com.edutech.progressive.entity.User;
 import com.edutech.progressive.exception.StudentAlreadyExistsException;
 import com.edutech.progressive.repository.AttendanceRepository;
 import com.edutech.progressive.repository.EnrollmentRepository;
 import com.edutech.progressive.repository.StudentRepository;
+import com.edutech.progressive.repository.UserRepository;
 import com.edutech.progressive.service.StudentService;
 
 @Service
@@ -26,26 +29,16 @@ public class StudentServiceImplJpa implements StudentService {
     @Autowired
     private AttendanceRepository attendanceRepository;
 
-    // Used by tests
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public StudentServiceImplJpa(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
-    public StudentServiceImplJpa(StudentRepository studentRepository,
-                                 EnrollmentRepository enrollmentRepository) {
-        this.studentRepository = studentRepository;
-        this.enrollmentRepository = enrollmentRepository;
-    }
-
-    public StudentServiceImplJpa(StudentRepository studentRepository,
-                                 EnrollmentRepository enrollmentRepository,
-                                 AttendanceRepository attendanceRepository) {
-        this.studentRepository = studentRepository;
-        this.enrollmentRepository = enrollmentRepository;
-        this.attendanceRepository = attendanceRepository;
-    }
-
-    // Used by Spring
     public StudentServiceImplJpa() {
     }
 
@@ -92,6 +85,10 @@ public class StudentServiceImplJpa implements StudentService {
             enrollmentRepository.deleteByStudent_StudentId(studentId);
         }
 
+        if (userRepository != null) {
+            userRepository.deleteByStudentId(studentId);
+        }
+
         studentRepository.deleteById(studentId);
     }
 
@@ -102,6 +99,39 @@ public class StudentServiceImplJpa implements StudentService {
 
     @Override
     public void modifyStudentDetails(StudentDTO studentDTO) {
-        // not implemented yet
+        Student student = studentRepository.findByStudentId(studentDTO.getStudentId());
+        if (student == null) {
+            throw new RuntimeException("Student not found");
+        }
+
+        Student existingStudent = studentRepository.findByEmail(studentDTO.getEmail());
+        if (existingStudent != null && existingStudent.getStudentId() != studentDTO.getStudentId()) {
+            throw new StudentAlreadyExistsException("Another student with this email already exists");
+        }
+
+        User user = userRepository.findByStudentId(studentDTO.getStudentId());
+        if (user == null) {
+            throw new RuntimeException("Associated user not found");
+        }
+
+        User sameUsernameUser = userRepository.findByUsername(studentDTO.getUsername());
+        if (sameUsernameUser != null && sameUsernameUser.getUserId() != user.getUserId()) {
+            throw new RuntimeException("Username already exists");
+        }
+
+        student.setFullName(studentDTO.getFullName());
+        student.setDateOfBirth(studentDTO.getDateOfBirth());
+        student.setContactNumber(studentDTO.getContactNumber());
+        student.setEmail(studentDTO.getEmail());
+        student.setAddress(studentDTO.getAddress());
+        studentRepository.save(student);
+
+        user.setUsername(studentDTO.getUsername());
+        if (studentDTO.getPassword() != null && !studentDTO.getPassword().trim().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(studentDTO.getPassword()));
+        }
+        user.setStudentId(student.getStudentId());
+        user.setReferenceId(student.getStudentId());
+        userRepository.save(user);
     }
 }

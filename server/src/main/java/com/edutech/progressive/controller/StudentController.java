@@ -1,5 +1,6 @@
 package com.edutech.progressive.controller;
 
+import com.edutech.progressive.dto.StudentDTO;
 import com.edutech.progressive.entity.Student;
 import com.edutech.progressive.exception.StudentAlreadyExistsException;
 import com.edutech.progressive.service.impl.StudentServiceImplArraylist;
@@ -18,10 +19,8 @@ public class StudentController {
     @Autowired
     private StudentServiceImplJpa studentServiceImplJpa;
 
-    private final StudentServiceImplArraylist arrayListService =
-            new StudentServiceImplArraylist();
+    private final StudentServiceImplArraylist arrayListService = new StudentServiceImplArraylist();
 
-    // GET /student
     @GetMapping
     public ResponseEntity<List<Student>> getAllStudents() {
         try {
@@ -31,7 +30,6 @@ public class StudentController {
         }
     }
 
-    // GET /student/{studentId}
     @GetMapping("/{studentId}")
     public ResponseEntity<Student> getStudentById(@PathVariable int studentId) {
         try {
@@ -41,7 +39,6 @@ public class StudentController {
         }
     }
 
-    // POST /student
     @PostMapping
     public ResponseEntity<Integer> addStudent(@RequestBody Student student) {
         try {
@@ -53,12 +50,11 @@ public class StudentController {
         }
     }
 
-    // PUT /student/{studentId}
     @PutMapping("/{studentId}")
-    public ResponseEntity<Void> updateStudent(@PathVariable int studentId, @RequestBody Student student) {
+    public ResponseEntity<Void> updateStudent(@PathVariable int studentId, @RequestBody StudentDTO studentDTO) {
         try {
-            student.setStudentId(studentId);
-            studentServiceImplJpa.updateStudent(student);
+            studentDTO.setStudentId(studentId);
+            studentServiceImplJpa.modifyStudentDetails(studentDTO);
             return ResponseEntity.ok().build();
         } catch (StudentAlreadyExistsException e) {
             return ResponseEntity.badRequest().build();
@@ -67,7 +63,6 @@ public class StudentController {
         }
     }
 
-    // DELETE /student/{studentId}
     @DeleteMapping("/{studentId}")
     public ResponseEntity<Void> deleteStudent(@PathVariable int studentId) {
         try {
@@ -78,19 +73,16 @@ public class StudentController {
         }
     }
 
-    // GET /student/fromArrayList
     @GetMapping("/fromArrayList")
     public ResponseEntity<List<Student>> getAllStudentFromArrayList() {
         return ResponseEntity.ok(arrayListService.getAllStudents());
     }
 
-    // POST /student/toArrayList
     @PostMapping("/toArrayList")
     public ResponseEntity<Integer> addStudentToArrayList(@RequestBody Student student) {
         return new ResponseEntity<>(arrayListService.addStudent(student), HttpStatus.CREATED);
     }
 
-    // GET /student/fromArrayList/sorted
     @GetMapping("/fromArrayList/sorted")
     public ResponseEntity<List<Student>> getAllStudentSortedByNameFromArrayList() {
         return ResponseEntity.ok(arrayListService.getAllStudentSortedByName());

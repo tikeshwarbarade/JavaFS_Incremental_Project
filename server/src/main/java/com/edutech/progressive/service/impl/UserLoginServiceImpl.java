@@ -42,6 +42,11 @@ public class UserLoginServiceImpl implements UserDetailsService {
         user.setRole(dto.getRole());
 
         if ("STUDENT".equalsIgnoreCase(dto.getRole()) || "ROLE_STUDENT".equalsIgnoreCase(dto.getRole())) {
+            Student existingStudent = studentRepository.findByEmail(dto.getEmail());
+            if (existingStudent != null) {
+                throw new RuntimeException("Student email already exists");
+            }
+
             Student student = new Student();
             student.setFullName(dto.getFullName());
             student.setContactNumber(dto.getContactNumber());
@@ -51,9 +56,15 @@ public class UserLoginServiceImpl implements UserDetailsService {
 
             Student savedStudent = studentRepository.save(student);
             user.setStudent(savedStudent);
+            user.setStudentId(savedStudent.getStudentId());
             user.setReferenceId(savedStudent.getStudentId());
 
         } else if ("TEACHER".equalsIgnoreCase(dto.getRole()) || "ROLE_TEACHER".equalsIgnoreCase(dto.getRole())) {
+            Teacher existingTeacher = teacherRepository.findByEmail(dto.getEmail());
+            if (existingTeacher != null) {
+                throw new RuntimeException("Teacher email already exists");
+            }
+
             Teacher teacher = new Teacher();
             teacher.setFullName(dto.getFullName());
             teacher.setContactNumber(dto.getContactNumber());
@@ -63,6 +74,7 @@ public class UserLoginServiceImpl implements UserDetailsService {
 
             Teacher savedTeacher = teacherRepository.save(teacher);
             user.setTeacher(savedTeacher);
+            user.setTeacherId(savedTeacher.getTeacherId());
             user.setReferenceId(savedTeacher.getTeacherId());
 
         } else {
@@ -77,18 +89,25 @@ public class UserLoginServiceImpl implements UserDetailsService {
     }
 
     public User getUserDetails(int userId) {
-        return userRepository.findById(userId).orElse(null);
-    }
+    return userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+}
 
     @Override
     public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(identifier);
+        User user;
 
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found with username: " + identifier);
+        try {
+            int userId = Integer.parseInt(identifier);
+            user = userRepository.findById(userId).orElse(null);
+        } catch (NumberFormatException e) {
+            user = userRepository.findByUsername(identifier);
         }
 
-        // ✅ Normalize role safely
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with identifier: " + identifier);
+        }
+
         String role = user.getRole();
         if (role == null || role.trim().isEmpty()) {
             throw new UsernameNotFoundException("User has no role assigned");

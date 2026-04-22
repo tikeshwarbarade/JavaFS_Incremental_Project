@@ -40,8 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 // Public endpoints
-                .antMatchers("/login", "/register", "/userlogin/**").permitAll()
-
+               .antMatchers("/login", "/register", "/userlogin/**", "/user/register", "/user/login").permitAll()
+.antMatchers(HttpMethod.GET, "/user/**").authenticated()
                 // Student APIs
                 .antMatchers(HttpMethod.GET, "/student/**")
                     .access("hasAnyAuthority('STUDENT','ROLE_STUDENT','TEACHER','ROLE_TEACHER')")

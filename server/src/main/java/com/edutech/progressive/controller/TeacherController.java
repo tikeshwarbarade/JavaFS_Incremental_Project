@@ -1,5 +1,6 @@
 package com.edutech.progressive.controller;
 
+import com.edutech.progressive.dto.TeacherDTO;
 import com.edutech.progressive.entity.Teacher;
 import com.edutech.progressive.exception.TeacherAlreadyExistsException;
 import com.edutech.progressive.service.impl.TeacherServiceImplJpa;
@@ -17,7 +18,6 @@ public class TeacherController {
     @Autowired
     private TeacherServiceImplJpa teacherServiceImplJpa;
 
-    // GET /teacher
     @GetMapping
     public ResponseEntity<List<Teacher>> getAllTeachers() {
         try {
@@ -27,7 +27,6 @@ public class TeacherController {
         }
     }
 
-    // GET /teacher/{teacherId}
     @GetMapping("/{teacherId}")
     public ResponseEntity<Teacher> getTeacherById(@PathVariable int teacherId) {
         try {
@@ -37,7 +36,6 @@ public class TeacherController {
         }
     }
 
-    // POST /teacher
     @PostMapping
     public ResponseEntity<Integer> addTeacher(@RequestBody Teacher teacher) {
         try {
@@ -49,12 +47,11 @@ public class TeacherController {
         }
     }
 
-    // PUT /teacher/{teacherId}
     @PutMapping("/{teacherId}")
-    public ResponseEntity<Void> updateTeacher(@PathVariable int teacherId, @RequestBody Teacher teacher) {
+    public ResponseEntity<Void> updateTeacher(@PathVariable int teacherId, @RequestBody TeacherDTO teacherDTO) {
         try {
-            teacher.setTeacherId(teacherId);
-            teacherServiceImplJpa.updateTeacher(teacher);
+            teacherDTO.setTeacherId(teacherId);
+            teacherServiceImplJpa.modifyTeacherDetails(teacherDTO);
             return ResponseEntity.ok().build();
         } catch (TeacherAlreadyExistsException e) {
             return ResponseEntity.badRequest().build();
@@ -63,7 +60,6 @@ public class TeacherController {
         }
     }
 
-    // DELETE /teacher/{teacherId}
     @DeleteMapping("/{teacherId}")
     public ResponseEntity<Void> deleteTeacher(@PathVariable int teacherId) {
         try {
@@ -74,7 +70,6 @@ public class TeacherController {
         }
     }
 
-    // GET /teacher/yearsofexperience
     @GetMapping("/yearsofexperience")
     public ResponseEntity<List<Teacher>> getTeacherSortedByYearsOfExperience() {
         try {

@@ -1,13 +1,17 @@
 package com.edutech.progressive.service.impl;
 
+import com.edutech.progressive.dto.TeacherDTO;
 import com.edutech.progressive.entity.Teacher;
+import com.edutech.progressive.entity.User;
 import com.edutech.progressive.exception.TeacherAlreadyExistsException;
 import com.edutech.progressive.repository.AttendanceRepository;
 import com.edutech.progressive.repository.CourseRepository;
 import com.edutech.progressive.repository.EnrollmentRepository;
 import com.edutech.progressive.repository.TeacherRepository;
+import com.edutech.progressive.repository.UserRepository;
 import com.edutech.progressive.service.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -28,36 +32,16 @@ public class TeacherServiceImplJpa implements TeacherService {
     @Autowired
     private AttendanceRepository attendanceRepository;
 
-    // Used by tests
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public TeacherServiceImplJpa(TeacherRepository teacherRepository) {
         this.teacherRepository = teacherRepository;
     }
 
-    public TeacherServiceImplJpa(TeacherRepository teacherRepository,
-                                 CourseRepository courseRepository) {
-        this.teacherRepository = teacherRepository;
-        this.courseRepository = courseRepository;
-    }
-
-    public TeacherServiceImplJpa(TeacherRepository teacherRepository,
-                                 CourseRepository courseRepository,
-                                 EnrollmentRepository enrollmentRepository) {
-        this.teacherRepository = teacherRepository;
-        this.courseRepository = courseRepository;
-        this.enrollmentRepository = enrollmentRepository;
-    }
-
-    public TeacherServiceImplJpa(TeacherRepository teacherRepository,
-                                 CourseRepository courseRepository,
-                                 EnrollmentRepository enrollmentRepository,
-                                 AttendanceRepository attendanceRepository) {
-        this.teacherRepository = teacherRepository;
-        this.courseRepository = courseRepository;
-        this.enrollmentRepository = enrollmentRepository;
-        this.attendanceRepository = attendanceRepository;
-    }
-
-    // Used by Spring
     public TeacherServiceImplJpa() {
     }
 
@@ -108,11 +92,55 @@ public class TeacherServiceImplJpa implements TeacherService {
             courseRepository.deleteByTeacherTeacherId(teacherId);
         }
 
+        if (userRepository != null) {
+            userRepository.deleteByTeacherId(teacherId);
+        }
+
         teacherRepository.deleteById(teacherId);
     }
 
     @Override
     public Teacher getTeacherById(int teacherId) {
         return teacherRepository.findByTeacherId(teacherId);
+    }
+
+    @Override
+    public void modifyTeacherDetails(TeacherDTO teacherDTO) {
+        Teacher teacher = teacherRepository.findByTeacherId(teacherDTO.getTeacherId());
+        if (teacher == null) {
+            throw new RuntimeException("Teacher not found");
+        }
+
+        Teacher existingTeacher = teacherRepository.findByEmail(teacherDTO.getEmail());
+        if (existingTeacher != null && existingTeacher.getTeacherId() != teacherDTO.getTeacherId()) {
+            throw new TeacherAlreadyExistsException("Another teacher with this email already exists");
+        }
+
+        User user = userRepository.findByTeacherId(teacherDTO.getTeacherId());
+        if (user == null) {
+            throw new RuntimeException("Associated user not found");
+        }
+
+        User sameUsernameUser = userRepository.findByUsername(teacherDTO.getUsername());
+        if (sameUsernameUser != null && sameUsernameUser.getUserId() != user.getUserId()) {
+            throw new RuntimeException("Username already exists");
+        }
+
+        teacher.setFullName(teacherDTO.getFullName());
+        teacher.setContactNumber(teacherDTO.getContactNumber());
+        teacher.setEmail(teacherDTO.getEmail());
+        teacher.setSubject(teacherDTO.getSubject());
+        teacher.setYearsOfExperience(
+                teacherDTO.getYearsOfExperience() == null ? 0 : teacherDTO.getYearsOfExperience()
+        );
+        teacherRepository.save(teacher);
+
+        user.setUsername(teacherDTO.getUsername());
+        if (teacherDTO.getPassword() != null && !teacherDTO.getPassword().trim().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(teacherDTO.getPassword()));
+        }
+        user.setTeacherId(teacher.getTeacherId());
+        user.setReferenceId(teacher.getTeacherId());
+        userRepository.save(user);
     }
 }
