@@ -1,0 +1,20 @@
+<div class="teacher-array-container">
+  <h2>Teacher List</h2>
+
+  <button (click)="toggleDetails()">
+    {{ showDetails ? 'Hide Teacher Details' : 'Show Teacher Details' }}
+  </button>
+
+  <p class="no-data" *ngIf="teachers.length === 0">No teachers available</p>
+
+  <div *ngIf="teachers.length > 0 && showDetails">
+    <div class="teacher-card" *ngFor="let teacher of teachers">
+      <p><strong>Teacher ID:</strong> {{ teacher.teacherId }}</p>
+      <p><strong>Full Name:</strong> {{ teacher.fullName }}</p>
+      <p><strong>Subject:</strong> {{ teacher.subject }}</p>
+      <p><strong>Contact Number:</strong> {{ teacher.contactNumber }}</p>
+      <p><strong>Email:</strong> {{ teacher.email }}</p>
+      <p><strong>Years of Experience:</strong> {{ teacher.yearsOfExperience }}</p>
+    </div>
+  </div>
+</div>

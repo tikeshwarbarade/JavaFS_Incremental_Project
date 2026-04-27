@@ -1,0 +1,73 @@
+.student-form-container {
+  max-width: 500px;
+  margin: 30px auto;
+  padding: 20px;
+  border-radius: 12px;
+  background-color: #f8f9fa;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    text-align: center;
+    margin-top: 0;
+    color: #2c3e50;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+  }
+
+  .button-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #fff;
+      background-color: #007bff;
+      font-size: 14px;
+    }
+
+    button[type='button'] {
+      background-color: #6c757d;
+    }
+  }
+
+  .success-message {
+    margin-top: 15px;
+    text-align: center;
+    color: green;
+    font-weight: bold;
+  }
+
+  .error-message {
+    margin-top: 15px;
+    text-align: center;
+    color: red;
+    font-weight: bold;
+  }
+}

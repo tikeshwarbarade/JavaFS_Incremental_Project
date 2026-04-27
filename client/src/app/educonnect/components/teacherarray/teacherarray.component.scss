@@ -1,0 +1,49 @@
+.teacher-array-container {
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 20px;
+  border-radius: 12px;
+  background-color: #fff8f0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    text-align: center;
+    margin-top: 0;
+    color: #8e44ad;
+  }
+
+  button {
+    display: block;
+    margin: 0 auto 20px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    background-color: #8e44ad;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  button:hover {
+    background-color: #6c3483;
+  }
+
+  .no-data {
+    text-align: center;
+    color: red;
+    font-weight: bold;
+  }
+
+  .teacher-card {
+    background-color: #ffffff;
+    border-left: 5px solid #8e44ad;
+    padding: 14px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+
+    p {
+      margin: 6px 0;
+      color: #333;
+    }
+  }
+}
