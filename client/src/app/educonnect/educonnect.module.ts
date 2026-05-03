@@ -1,22 +1,23 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { StudentCreateComponent } from './components/studentcreate/studentcreate.component';
-import { TeacherArrayComponent } from './components/teacherarray/teacherarray.component';
+import { TeacherCreateComponent } from './components/teachercreate/teachercreate.component';
+import { CourseCreateComponent } from './components/coursecreate/coursecreate.component';
 
 @NgModule({
   declarations: [
     StudentCreateComponent,
-    TeacherArrayComponent
+    TeacherCreateComponent,
+    CourseCreateComponent
   ],
   imports: [
     CommonModule,
-    FormsModule
-  ],
-  exports: [
-    StudentCreateComponent,
-    TeacherArrayComponent
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule
   ]
 })
 export class EduconnectModule { }

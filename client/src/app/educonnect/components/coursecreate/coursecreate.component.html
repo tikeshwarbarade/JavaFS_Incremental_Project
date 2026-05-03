@@ -1,0 +1,48 @@
+<div class="course-form-container">
+  <h2>Create Course</h2>
+
+  <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="courseName">Course Name</label>
+      <input id="courseName" type="text" formControlName="courseName" />
+      <div class="error" *ngIf="courseForm.get('courseName')?.touched && courseForm.get('courseName')?.invalid">
+        Course Name is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" rows="5" formControlName="description"></textarea>
+      <div class="char-count">
+        {{ courseForm.get('description')?.value?.length || 0 }}/500
+      </div>
+      <div class="error" *ngIf="courseForm.get('description')?.touched && courseForm.get('description')?.errors?.['maxlength']">
+        Description cannot exceed 500 characters.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="teacherId">Teacher ID</label>
+      <input id="teacherId" type="number" formControlName="teacherId" />
+      <div class="error" *ngIf="courseForm.get('teacherId')?.touched && courseForm.get('teacherId')?.errors?.['required']">
+        Teacher ID is required.
+      </div>
+      <div class="error" *ngIf="courseForm.get('teacherId')?.touched && courseForm.get('teacherId')?.errors?.['min']">
+        Teacher ID must be greater than 0.
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button type="submit">Submit</button>
+      <button type="button" (click)="resetForm()">Reset</button>
+    </div>
+  </form>
+
+  <div class="success-message" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div>
