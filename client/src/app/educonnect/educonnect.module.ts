@@ -6,12 +6,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { StudentCreateComponent } from './components/studentcreate/studentcreate.component';
 import { TeacherCreateComponent } from './components/teachercreate/teachercreate.component';
 import { CourseCreateComponent } from './components/coursecreate/coursecreate.component';
+import { EnrollmentComponent } from './components/enrollment/enrollment.component';
 
 @NgModule({
   declarations: [
     StudentCreateComponent,
     TeacherCreateComponent,
-    CourseCreateComponent
+    CourseCreateComponent,
+    EnrollmentComponent
   ],
   imports: [
     CommonModule,

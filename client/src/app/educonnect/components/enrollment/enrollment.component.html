@@ -1,0 +1,42 @@
+<div class="enrollment-form-container">
+  <h2>Add Enrollment</h2>
+
+  <form [formGroup]="enrollmentForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="studentId">Student ID</label>
+      <input id="studentId" type="number" formControlName="studentId" />
+      <div class="error" *ngIf="enrollmentForm.get('studentId')?.touched && enrollmentForm.get('studentId')?.errors?.['required']">
+        Student ID is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="courseId">Course ID</label>
+      <input id="courseId" type="number" formControlName="courseId" />
+      <div class="error" *ngIf="enrollmentForm.get('courseId')?.touched && enrollmentForm.get('courseId')?.errors?.['required']">
+        Course ID is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="enrollmentDate">Enrollment Date</label>
+      <input id="enrollmentDate" type="date" formControlName="enrollmentDate" />
+      <div class="error" *ngIf="enrollmentForm.get('enrollmentDate')?.touched && enrollmentForm.get('enrollmentDate')?.errors?.['required']">
+        Enrollment Date is required.
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button type="submit">Add Enrollment</button>
+      <button type="button" (click)="resetForm()">Reset</button>
+    </div>
+  </form>
+
+  <div class="success-message" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div>
