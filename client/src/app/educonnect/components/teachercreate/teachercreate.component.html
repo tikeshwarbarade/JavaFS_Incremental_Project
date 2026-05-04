@@ -1,11 +1,20 @@
 <div class="teacher-form-container">
-  <h2>Create Teacher</h2>
+  <h2>Create Teacher</h>  <h2>Create Teacher</h2>
+
+  <div class="success-message" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div>
 
   <form [formGroup]="teacherForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
       <label for="fullName">Full Name</label>
       <input id="fullName" type="text" formControlName="fullName" />
-      <div class="error" *ngIf="teacherForm.get('fullName')?.touched && teacherForm.get('fullName')?.invalid">
+      <div class="error" *ngIf="teacherForm.get('fullName')?.touched && teacherForm.get('fullName')?.errors?.['required']">
         Full Name is required.
       </div>
     </div>
@@ -35,7 +44,7 @@
     <div class="form-group">
       <label for="subject">Subject</label>
       <input id="subject" type="text" formControlName="subject" />
-      <div class="error" *ngIf="teacherForm.get('subject')?.touched && teacherForm.get('subject')?.invalid">
+      <div class="error" *ngIf="teacherForm.get('subject')?.touched && teacherForm.get('subject')?.errors?.['required']">
         Subject is required.
       </div>
     </div>
@@ -52,16 +61,6 @@
     </div>
 
     <div class="button-group">
-      <button type="submit">Submit</button>
-      <button type="button" (click)="resetForm()">Reset</button>
+      <button type="submit" [disabled]="teacherForm.invalid">Create Teacher</button>
+      <a routerLink="/educonnect/dashboard" class="dashboard-link">Back to Dashboard</a>
     </div>
-  </form>
-
-  <div class="success-message" *ngIf="successMessage">
-    {{ successMessage }}
-  </div>
-
-  <div class="error-message" *ngIf="errorMessage">
-    {{ errorMessage }}
-  </div>
-</div>

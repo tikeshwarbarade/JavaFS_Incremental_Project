@@ -1,0 +1,15 @@
+
+<nav class="navbar">
+  <div class="navbar-left">
+    <a routerLink="/educonnect/dashboard" class="brand">EduConnect</a>
+  </div>
+
+  <div class="navbar-center" *ngIf="role === 'TEACHER'">
+    <a routerLink="/educonnect/course">Add Course</a>
+    <a routerLink="/educonnect/enrollment">Add Enrollment</a>
+  </div>
+
+  <div class="navbar-right">
+    <app-logout></app-logout>
+  </div>
+</nav

@@ -1,10 +1,11 @@
 .teacher-form-container {
-  max-width: 500px;
+  max-width: 550px;
   margin: 20px auto;
-  padding: 20px;
+  padding: 24px;
+  background: #ffffff;
   border: 1px solid #dcdcdc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 h2 {
@@ -13,63 +14,67 @@ h2 {
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 16px;
+}
 
-  label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-  }
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
 
-  input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #bbb;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  box-sizing: border-box;
 }
 
 .button-group {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 10px;
-  justify-content: center;
-  margin-top: 20px;
+  margin-top: 16px;
+}
 
-  button {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #28a745;
+  color: #fff;
+  cursor: pointer;
+}
 
-  button[type='submit'] {
-    background-color: #007bff;
-    color: white;
-  }
+button:disabled {
+  background-color: #a5d6af;
+  cursor: not-allowed;
+}
 
-  button[type='button'] {
-    background-color: #6c757d;
-    color: white;
-  }
+.dashboard-link {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: 600;
 }
 
 .error {
-  color: #d9534f;
+  color: #dc3545;
   font-size: 13px;
-  margin-top: 5px;
+  margin-top: 4px;
 }
 
 .success-message {
-  color: #28a745;
   margin-top: 15px;
+  color: #28a745;
   text-align: center;
   font-weight: 600;
 }
 
 .error-message {
-  color: #d9534f;
   margin-top: 15px;
+  color: #dc3545;
   text-align: center;
   font-weight: 600;
 }

@@ -1,4 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
+
+import { EduconnectService } from '../../services/educonnect.service';
 import { Student } from '../../models/Student';
 
 @Component({
@@ -6,54 +10,72 @@ import { Student } from '../../models/Student';
   templateUrl: './studentcreate.component.html',
   styleUrls: ['./studentcreate.component.scss']
 })
-export class StudentCreateComponent {
-  student: Student;
-  successMessage: string | null;
-  errorMessage: string | null;
+export class StudentCreateComponent implements OnInit {
+  studentForm!: FormGroup;
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
 
-  constructor() {
-    this.student = new Student(
-      0,
-      '',
-      null,
-      '',
-      '',
-      ''
-    );
+  constructor(
+    private fb: FormBuilder,
+    private educonnectService: EduconnectService
+  ) {}
 
-    this.successMessage = null;
-    this.errorMessage = null;
+  ngOnInit(): void {
+    this.initializeForm();
+  }
+
+  initializeForm(): void {
+    this.studentForm = this.fb.group({
+      studentId: [0],
+      fullName: ['', [Validators.required, Validators.minLength(2)]],
+      dateOfBirth: ['', Validators.required],
+      contactNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      email: ['', [Validators.required, Validators.email]],
+      address: ['', [Validators.required, Validators.minLength(5)]]
+    });
   }
 
   onSubmit(): void {
     this.successMessage = null;
     this.errorMessage = null;
 
-    if (
-      !this.student.fullName ||
-      !this.student.dateOfBirth ||
-      !this.student.contactNumber ||
-      !this.student.email ||
-      !this.student.address
-    ) {
-      this.errorMessage = "Please fill in all required fields.";
+    if (this.studentForm.invalid) {
+      this.studentForm.markAllAsTouched();
+      this.errorMessage = 'Please fill out all fields correctly.';
       return;
     }
 
-    this.successMessage = "Student created successfully!";
-  }
+    const formValue = this.studentForm.value;
 
-  resetForm(): void {
-    this.student = new Student(
-      0,
-      '',
-      null,
-      '',
-      '',
-      ''
+    const student = new Student(
+      formValue.studentId ?? 0,
+      formValue.fullName,
+      formValue.dateOfBirth,
+      formValue.contactNumber,
+      formValue.email,
+      formValue.address
     );
 
+    this.educonnectService.addStudent(student).subscribe({
+      next: () => {
+        this.successMessage = 'Student created successfully!';
+        this.errorMessage = null;
+        this.studentForm.reset({
+          studentId: 0,
+          fullName: '',
+          dateOfBirth: '',
+          contactNumber: '',
+          email: '',
+          address: ''
+        });
+      },
+      error: (error: HttpErrorResponse) => this.handleError(error)
+    });
+  }
+
+  private handleError(error: HttpErrorResponse): void {
     this.successMessage = null;
-    this.errorMessage = null;
+    this.errorMessage =
+      error?.error?.message || 'Failed to create student. Please try again.';
   }
 }

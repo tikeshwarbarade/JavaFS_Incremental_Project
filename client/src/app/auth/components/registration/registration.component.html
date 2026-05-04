@@ -69,42 +69,27 @@
       </div>
     </div>
 
+    <div class="form-group">
+      <label for="address">Address</label>
+      <input id="address" type="text" formControlName="address" />
+    </div>
+
     <div *ngIf="selectedRole === 'TEACHER'">
       <div class="form-group">
         <label for="subject">Subject</label>
         <input id="subject" type="text" formControlName="subject" />
-        <div class="error" *ngIf="registrationForm.get('subject')?.touched && registrationForm.get('subject')?.errors?.['required']">
-          Subject is required.
-        </div>
       </div>
 
       <div class="form-group">
         <label for="yearsOfExperience">Years of Experience</label>
         <input id="yearsOfExperience" type="number" formControlName="yearsOfExperience" />
-        <div class="error" *ngIf="registrationForm.get('yearsOfExperience')?.touched && registrationForm.get('yearsOfExperience')?.errors?.['required']">
-          Years of Experience is required.
-        </div>
-        <div class="error" *ngIf="registrationForm.get('yearsOfExperience')?.touched && registrationForm.get('yearsOfExperience')?.errors?.['min']">
-          Minimum 1 year of experience is required.
-        </div>
       </div>
     </div>
 
     <div *ngIf="selectedRole === 'STUDENT'">
       <div class="form-group">
-        <label for="studentId">Student ID</label>
-        <input id="studentId" type="text" formControlName="studentId" />
-        <div class="error" *ngIf="registrationForm.get('studentId')?.touched && registrationForm.get('studentId')?.errors?.['required']">
-          Student ID is required.
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="courseName">Course Name</label>
-        <input id="courseName" type="text" formControlName="courseName" />
-        <div class="error" *ngIf="registrationForm.get('courseName')?.touched && registrationForm.get('courseName')?.errors?.['required']">
-          Course Name is required.
-        </div>
+        <label for="dateOfBirth">Date of Birth</label>
+        <input id="dateOfBirth" type="date" formControlName="dateOfBirth" />
       </div>
     </div>
 

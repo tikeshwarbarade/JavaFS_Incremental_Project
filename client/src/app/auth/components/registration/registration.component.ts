@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
+import { UserRegistrationDTO } from '../../../educonnect/models/UserRegistrationDTO';
 
 @Component({
   selector: 'app-registration',
@@ -12,7 +14,10 @@ export class RegistrationComponent implements OnInit {
   errorMessage: string | null = null;
   selectedRole: string | null = null;
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.registrationForm = this.formBuilder.group({
@@ -45,7 +50,10 @@ export class RegistrationComponent implements OnInit {
 
     if (role === 'TEACHER') {
       this.registrationForm.get('subject')?.setValidators([Validators.required]);
-      this.registrationForm.get('yearsOfExperience')?.setValidators([Validators.required, Validators.min(1)]);
+      this.registrationForm.get('yearsOfExperience')?.setValidators([
+        Validators.required,
+        Validators.min(1)
+      ]);
       this.registrationForm.get('address')?.setValidators([Validators.required]);
     } else if (role === 'STUDENT') {
       this.registrationForm.get('dateOfBirth')?.setValidators([Validators.required]);
@@ -62,15 +70,25 @@ export class RegistrationComponent implements OnInit {
     this.successMessage = null;
     this.errorMessage = null;
 
-    if (this.registrationForm.valid) {
-      this.successMessage = 'Registration successful!';
-      this.errorMessage = null;
-      this.resetForm();
-    } else {
+    if (this.registrationForm.invalid) {
       this.registrationForm.markAllAsTouched();
       this.errorMessage = 'Please fill out all fields correctly.';
-      this.successMessage = null;
+      return;
     }
+
+    const userData: UserRegistrationDTO = this.registrationForm.value;
+
+    this.authService.createUser(userData).subscribe({
+      next: () => {
+        this.successMessage = 'Registration successful!';
+        this.errorMessage = null;
+        this.resetForm();
+      },
+      error: () => {
+        this.errorMessage = 'Registration failed. Please try again.';
+        this.successMessage = null;
+      }
+    });
   }
 
   resetForm(): void {

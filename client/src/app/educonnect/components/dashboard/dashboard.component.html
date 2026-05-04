@@ -1,0 +1,54 @@
+<app-navbar></app-navbar>
+
+<div class="dashboard-container">
+  <h2>Teacher Dashboard</h2>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="teacher-card" *ngIf="teacher">
+    <h3>Teacher Details</h3>
+    <p><strong>Name:</strong> {{ teacher.fullName }}</p>
+    <p><strong>Email:</strong> {{ teacher.email }}</p>
+    <p><strong>Specialty:</strong> {{ teacher.subject }}</p>
+    <p><strong>Years of Experience:</strong> {{ teacher.yearsOfExperience }}</p>
+  </div>
+
+  <div class="courses-section">
+    <h3>Managed Courses</h3>
+    <div class="course-card" *ngFor="let course of courses">
+      <p><strong>Course Name:</strong> {{ course.courseName }}</p>
+      <p><strong>Description:</strong> {{ course.description }}</p>
+    </div>
+  </div>
+
+  <div class="selection-section" *ngIf="courses.length > 0">
+    <h3>Show Enrolled Students</h3>
+    <select (change)="onCourseSelect($event.target.value)">
+      <option value="">Select Course</option>
+      <option *ngFor="let course of courses" [value]="course.courseId">
+        {{ course.courseName }}
+      </option>
+    </select>
+  </div>
+
+  <div class="students-section" *ngIf="selectedCourseId">
+    <h3>Enrolled Students</h3>
+    <div *ngIf="enrolledStudents.length === 0">No enrolled students found.</div>
+    <ul *ngIf="enrolledStudents.length > 0">
+      <li *ngFor="let student of enrolledStudents">
+        {{ student.fullName }} - {{ student.email }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="all-students-section">
+    <h3>All Students</h3>
+    <ul>
+      <li *ngFor="let student of students">
+        {{ student.fullName }} - {{ student.email }}
+      </li>
+    </ul>
+  </div>
+</div>

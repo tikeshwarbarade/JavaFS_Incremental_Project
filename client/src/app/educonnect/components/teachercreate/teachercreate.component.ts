@@ -1,14 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
-interface Teacher {
-  teacherId: number;
-  fullName: string;
-  contactNumber: string;
-  email: string;
-  subject: string;
-  yearsOfExperience: number;
-}
+import { EduconnectService } from '../../services/educonnect.service';
+import { Teacher } from '../../models/Teacher';
 
 @Component({
   selector: 'app-teachercreate',
@@ -17,10 +12,13 @@ interface Teacher {
 })
 export class TeacherCreateComponent implements OnInit {
   teacherForm!: FormGroup;
-  successMessage: string = '';
-  errorMessage: string = '';
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private educonnectService: EduconnectService
+  ) {}
 
   ngOnInit(): void {
     this.teacherForm = this.fb.group({
@@ -34,48 +32,46 @@ export class TeacherCreateComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
+    this.successMessage = null;
+    this.errorMessage = null;
 
-    if (this.teacherForm.valid) {
-      const teacher: Teacher = {
-        teacherId: this.teacherForm.value.teacherId,
-        fullName: this.teacherForm.value.fullName,
-        contactNumber: this.teacherForm.value.contactNumber,
-        email: this.teacherForm.value.email,
-        subject: this.teacherForm.value.subject,
-        yearsOfExperience: this.teacherForm.value.yearsOfExperience
-      };
-
-      console.log('Teacher Created:', teacher);
-      this.successMessage = 'Teacher created successfully!';
-      this.errorMessage = '';
-
-      this.teacherForm.reset({
-        teacherId: 0,
-        fullName: '',
-        contactNumber: '',
-        email: '',
-        subject: '',
-        yearsOfExperience: 0
-      });
-    } else {
+    if (this.teacherForm.invalid) {
       this.teacherForm.markAllAsTouched();
-      this.errorMessage = 'Please correct the errors in the form before submitting.';
-      this.successMessage = '';
+      this.errorMessage = 'Please fill out all fields correctly.';
+      return;
     }
+
+    const formValue = this.teacherForm.value;
+
+    const teacher = new Teacher(
+      formValue.teacherId ?? 0,
+      formValue.fullName,
+      formValue.contactNumber,
+      formValue.email,
+      formValue.subject,
+      formValue.yearsOfExperience
+    );
+
+    this.educonnectService.addTeacher(teacher).subscribe({
+      next: () => {
+        this.successMessage = 'Teacher created successfully!';
+        this.errorMessage = null;
+        this.teacherForm.reset({
+          teacherId: 0,
+          fullName: '',
+          contactNumber: '',
+          email: '',
+          subject: '',
+          yearsOfExperience: 0
+        });
+      },
+      error: (error: HttpErrorResponse) => this.handleError(error)
+    });
   }
 
-  resetForm(): void {
-    this.teacherForm.reset({
-      teacherId: 0,
-      fullName: '',
-      contactNumber: '',
-      email: '',
-      subject: '',
-      yearsOfExperience: 0
-    });
-    this.successMessage = '';
-    this.errorMessage = '';
+  private handleError(error: HttpErrorResponse): void {
+    this.successMessage = null;
+    this.errorMessage =
+      error?.error?.message || 'Failed to create teacher. Please try again.';
   }
 }

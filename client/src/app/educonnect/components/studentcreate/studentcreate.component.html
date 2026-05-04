@@ -1,62 +1,70 @@
 <div class="student-form-container">
   <h2>Create Student</h2>
 
-  <form (ngSubmit)="onSubmit()">
+  <form [formGroup]="studentForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
       <label for="fullName">Full Name</label>
-      <input
-        id="fullName"
-        name="fullName"
-        type="text"
-        [(ngModel)]="student.fullName"
-      />
+      <input id="fullName" type="text" formControlName="fullName" />
+      <div class="error" *ngIf="studentForm.get('fullName')?.touched && studentForm.get('fullName')?.errors?.['required']">
+        Full Name is required.
+      </div>
+      <div class="error" *ngIf="studentForm.get('fullName')?.touched && studentForm.get('fullName')?.errors?.['minlength']">
+        Full Name must be at least 2 characters.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="dateOfBirth">Date of Birth</label>
-      <input
-        id="dateOfBirth"
-        name="dateOfBirth"
-        type="date"
-        [(ngModel)]="student.dateOfBirth"
-      />
+      <input id="dateOfBirth" type="date" formControlName="dateOfBirth" />
+      <div class="error" *ngIf="studentForm.get('dateOfBirth')?.touched && studentForm.get('dateOfBirth')?.errors?.['required']">
+        Date of Birth is required.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="contactNumber">Contact Number</label>
-      <input
-        id="contactNumber"
-        name="contactNumber"
-        type="text"
-        [(ngModel)]="student.contactNumber"
-      />
+      <input id="contactNumber" type="text" formControlName="contactNumber" />
+      <div class="error" *ngIf="studentForm.get('contactNumber')?.touched && studentForm.get('contactNumber')?.errors?.['required']">
+        Contact Number is required.
+      </div>
+      <div class="error" *ngIf="studentForm.get('contactNumber')?.touched && studentForm.get('contactNumber')?.errors?.['pattern']">
+        Contact Number must be exactly 10 digits.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="email">Email</label>
-      <input
-        id="email"
-        name="email"
-        type="email"
-        [(ngModel)]="student.email"
-      />
+      <input id="email" type="email" formControlName="email" />
+      <div class="error" *ngIf="studentForm.get('email')?.touched && studentForm.get('email')?.errors?.['required']">
+        Email is required.
+      </div>
+      <div class="error" *ngIf="studentForm.get('email')?.touched && studentForm.get('email')?.errors?.['email']">
+        Enter a valid email address.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="address">Address</label>
-      <textarea
-        id="address"
-        name="address"
-        [(ngModel)]="student.address"
-      ></textarea>
+      <textarea id="address" rows="4" formControlName="address"></textarea>
+      <div class="error" *ngIf="studentForm.get('address')?.touched && studentForm.get('address')?.errors?.['required']">
+        Address is required.
+      </div>
+      <div class="error" *ngIf="studentForm.get('address')?.touched && studentForm.get('address')?.errors?.['minlength']">
+        Address must be at least 5 characters.
+      </div>
     </div>
 
     <div class="button-group">
-      <button type="submit">Submit</button>
-      <button type="button" (click)="resetForm()">Reset</button>
+      <button type="submit" [disabled]="studentForm.invalid">Create Student</button>
+      <a routerLink="/educonnect/dashboard" class="dashboard-link">Back to Dashboard</a>
     </div>
   </form>
 
-  <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
-  <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <div class="success-message" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
 </div>
