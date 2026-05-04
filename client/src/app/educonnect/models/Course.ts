@@ -5,6 +5,7 @@ export class Course {
   courseName: string;
   description: string;
   teacher: Teacher;
+  logAttributes?: () => void;
 
   constructor(
     courseId: number,
@@ -16,12 +17,12 @@ export class Course {
     this.courseName = courseName;
     this.description = description;
     this.teacher = teacher;
-  }
 
-  logAttributes(): void {
-    console.log('courseId:', this.courseId);
-    console.log('courseName:', this.courseName);
-    console.log('description:', this.description);
-    console.log('teacher:', this.teacher);
+    this.logAttributes = () => {
+      console.log('courseId:', this.courseId);
+      console.log('courseName:', this.courseName);
+      console.log('description:', this.description);
+      console.log('teacher:', this.teacher);
+    };
   }
 }

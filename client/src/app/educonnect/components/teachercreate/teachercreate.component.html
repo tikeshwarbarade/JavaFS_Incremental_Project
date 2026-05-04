@@ -1,14 +1,5 @@
 <div class="teacher-form-container">
-  <h2>Create Teacher</h>  <h2>Create Teacher</h2>
-
-  <div class="success-message" *ngIf="successMessage">
-    {{ successMessage }}
-  </div>
-
-  <div class="error-message" *ngIf="errorMessage">
-    {{ errorMessage }}
-  </div>
-</div>
+  <h2>Create Teacher</h2>
 
   <form [formGroup]="teacherForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
@@ -64,3 +55,13 @@
       <button type="submit" [disabled]="teacherForm.invalid">Create Teacher</button>
       <a routerLink="/educonnect/dashboard" class="dashboard-link">Back to Dashboard</a>
     </div>
+  </form>
+
+  <div class="success-message" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div>

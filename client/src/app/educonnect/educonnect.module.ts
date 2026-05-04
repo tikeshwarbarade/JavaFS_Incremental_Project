@@ -4,8 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
-import { EduConnectRoutingModule } from './educonnect-routing.module';
 import { SharedModule } from '../shared/shared.module';
+import { EduConnectRoutingModule } from './educonnect-routing.module';
 
 import { StudentCreateComponent } from './components/studentcreate/studentcreate.component';
 import { TeacherCreateComponent } from './components/teachercreate/teachercreate.component';
@@ -27,8 +27,8 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
     ReactiveFormsModule,
     HttpClientModule,
     RouterModule,
-    EduConnectRoutingModule,
-    SharedModule
+    SharedModule,
+    EduConnectRoutingModule
   ]
 })
 export class EduconnectModule { }

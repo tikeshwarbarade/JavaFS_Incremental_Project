@@ -1,5 +1,3 @@
-<app-navbar></app-navbar>
-
 <div class="dashboard-container">
   <h2>Teacher Dashboard</h2>
 
@@ -7,12 +5,12 @@
     {{ errorMessage }}
   </div>
 
-  <div class="teacher-card" *ngIf="teacher">
+  <div class="teacher-card" *ngIf="teacherDetails">
     <h3>Teacher Details</h3>
-    <p><strong>Name:</strong> {{ teacher.fullName }}</p>
-    <p><strong>Email:</strong> {{ teacher.email }}</p>
-    <p><strong>Specialty:</strong> {{ teacher.subject }}</p>
-    <p><strong>Years of Experience:</strong> {{ teacher.yearsOfExperience }}</p>
+    <p><strong>Name:</strong> {{ teacherDetails.fullName }}</p>
+    <p><strong>Email:</strong> {{ teacherDetails.email }}</p>
+    <p><strong>Specialty:</strong> {{ teacherDetails.subject }}</p>
+    <p><strong>Years of Experience:</strong> {{ teacherDetails.yearsOfExperience }}</p>
   </div>
 
   <div class="courses-section">
