@@ -1,28 +1,11 @@
-import { Student } from './Student';
-import { Course } from './Course';
+import { Course } from "./Course";
+import { Student } from "./Student";
 
-export class Enrollment {
+
+export interface Enrollment {
   enrollmentId: number;
-  student: Student;
   course: Course;
+  student: Student;
   enrollmentDate: Date;
-
-  constructor(
-    enrollmentId: number,
-    student: Student,
-    course: Course,
-    enrollmentDate: Date
-  ) {
-    this.enrollmentId = enrollmentId;
-    this.student = student;
-    this.course = course;
-    this.enrollmentDate = enrollmentDate;
-  }
-
-  logAttributes(): void {
-    console.log('enrollmentId:', this.enrollmentId);
-    console.log('student:', this.student);
-    console.log('course:', this.course);
-    console.log('enrollmentDate:', this.enrollmentDate);
-  }
 }
+

@@ -1,14 +1,13 @@
 <nav class="navbar">
-  <div class="navbar-left">
-    <a routerLink="/educonnect/dashboard" class="brand">EduConnect</a>
-  </div>
+  <div class="brand" (click)="goToDashboard()">EduConnect</div>
 
-  <div class="navbar-center" *ngIf="role === 'TEACHER'">
-    <a routerLink="/educonnect/course">Add Course</a>
-    <a routerLink="/educonnect/enrollment">Add Enrollment</a>
-  </div>
+  <div class="nav-right">
+    <span *ngIf="role === 'STUDENT'" class="welcome-text">
+      Welcome {{ studentName || 'Student' }}
+    </span>
 
-  <div class="navbar-right">
-    <app-logout></app-logout>
+    <button *ngIf="role === 'STUDENT'" (click)="goToEnrollment()">Enroll</button>
+    <button (click)="goToDashboard()">Dashboard</button>
+    <button (click)="logout()">Logout</button>
   </div>
 </nav>
