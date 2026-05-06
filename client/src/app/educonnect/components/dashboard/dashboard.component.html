@@ -1,50 +1,105 @@
-<div class="dashboard-container" *ngIf="role === 'STUDENT'; else noAccess">
-  <h2>Student Dashboard</h2>
+<div class="dashboard-container">
+  <h2 *ngIf="role === 'STUDENT'">Student Dashboard</h2>
+  <h2 *ngIf="role === 'TEACHER'">Teacher Dashboard</h2>
 
-  <div class="profile-card" *ngIf="studentDetails">
-    <h3>My Profile</h3>
-    <p><strong>Name:</strong> {{ studentDetails.fullName }}</p>
-    <p><strong>Email:</strong> {{ studentDetails.email }}</p>
-    <p><strong>Date of Birth:</strong> {{ studentDetails.dateOfBirth }}</p>
-    <p><strong>Contact Number:</strong> {{ studentDetails.contactNumber }}</p>
-    <p><strong>Address:</strong> {{ studentDetails.address }}</p>
+  <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
+  <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-    <div class="action-buttons">
-      <button (click)="editProfile()">Update Profile</button>
-      <button class="danger" (click)="deleteProfile()">Delete Profile</button>
-    </div>
-  </div>
+  <!-- STUDENT VIEW -->
+  <div *ngIf="role === 'STUDENT'">
+    <div class="profile-card" *ngIf="studentDetails">
+      <h3>My Profile</h3>
+      <p><strong>Name:</strong> {{ studentDetails.fullName }}</p>
+      <p><strong>Email:</strong> {{ studentDetails.email }}</p>
+      <p><strong>Date of Birth:</strong> {{ studentDetails.dateOfBirth }}</p>
+      <p><strong>Contact Number:</strong> {{ studentDetails.contactNumber }}</p>
+      <p><strong>Address:</strong> {{ studentDetails.address }}</p>
 
-  <div class="section-card">
-    <h3>Enrolled Courses</h3>
-    <div *ngIf="enrollments.length > 0; else noEnrollments">
-      <div class="course-card" *ngFor="let enrollment of enrollments">
-        <p><strong>Course Name:</strong> {{ enrollment.course?.courseName }}</p>
-        <p><strong>Description:</strong> {{ enrollment.course?.description }}</p>
-        <p><strong>Teacher:</strong> {{ enrollment.course?.teacher?.fullName }}</p>
-        <p><strong>Specialty:</strong> {{ enrollment.course?.teacher?.specialty || enrollment.course?.teacher?.subject }}</p>
+      <div class="action-buttons">
+        <button (click)="editProfile()">Update Profile</button>
+        <button class="danger" (click)="deleteProfile()">Delete Profile</button>
       </div>
     </div>
 
-    <ng-template #noEnrollments>
-      <p>No enrolled courses found.</p>
-    </ng-template>
+    <div class="section-card">
+      <h3>Enrolled Courses</h3>
+      <div *ngIf="enrollments.length > 0; else noStudentEnrollments">
+        <div class="course-card" *ngFor="let enrollment of enrollments">
+          <p><strong>Course Name:</strong> {{ enrollment.course?.courseName }}</p>
+          <p><strong>Description:</strong> {{ enrollment.course?.description }}</p>
+          <p><strong>Teacher:</strong> {{ enrollment.course?.teacher?.fullName }}</p>
+        </div>
+      </div>
+      <ng-template #noStudentEnrollments>
+        <p>No enrolled courses found.</p>
+      </ng-template>
+    </div>
+
+    <div class="section-card">
+      <h3>Available Courses</h3>
+      <div class="course-card" *ngFor="let course of courses; trackBy: trackByCourseId">
+        <p><strong>Course Name:</strong> {{ course.courseName }}</p>
+        <p><strong>Description:</strong> {{ course.description }}</p>
+        <p><strong>Teacher:</strong> {{ course.teacher?.fullName }}</p>
+        <p><strong>Specialty:</strong> {{ course.teacher?.specialty || course.teacher?.subject }}</p>
+      </div>
+    </div>
   </div>
 
-  <div class="section-card">
-    <h3>Available Courses</h3>
-    <div class="course-card" *ngFor="let course of courses; trackBy: trackByCourseId">
-      <p><strong>Course Name:</strong> {{ course.courseName }}</p>
-      <p><strong>Description:</strong> {{ course.description }}</p>
-      <p><strong>Teacher:</strong> {{ course.teacher?.fullName }}</p>
-      <p><strong>Specialty:</strong> {{ course.teacher?.specialty || course.teacher?.subject }}</p>
+  <!-- TEACHER VIEW -->
+  <div *ngIf="role === 'TEACHER'">
+    <div class="profile-card" *ngIf="teacherDetails">
+      <h3>My Profile</h3>
+      <p><strong>Name:</strong> {{ teacherDetails.fullName }}</p>
+      <p><strong>Email:</strong> {{ teacherDetails.email }}</p>
+      <p><strong>Contact Number:</strong> {{ teacherDetails.contactNumber }}</p>
+      <p><strong>Subject:</strong> {{ teacherDetails.subject }}</p>
+      <p><strong>Years of Experience:</strong> {{ teacherDetails.yearsOfExperience }}</p>
+
+      <div class="action-buttons">
+        <button (click)="editProfile()">Update Profile</button>
+        <button class="danger" (click)="deleteTeacher()">Delete Profile</button>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <h3>Managed Courses</h3>
+      <div *ngIf="courses.length > 0; else noTeacherCourses">
+        <div class="course-card" *ngFor="let course of courses; trackBy: trackByCourseId">
+          <p><strong>Course Name:</strong> {{ course.courseName }}</p>
+          <p><strong>Description:</strong> {{ course.description }}</p>
+
+          <div class="action-buttons">
+            <button (click)="editCourse(course)">Edit Course</button>
+            <button class="danger" (click)="deleteCourse(course.courseId)">Delete Course</button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noTeacherCourses>
+        <p>No courses available for this teacher.</p>
+      </ng-template>
+    </div>
+
+    <div class="section-card">
+      <h3>Student Enrollments</h3>
+      <div *ngIf="teacherEnrollments.length > 0; else noTeacherEnrollments">
+        <div class="course-card" *ngFor="let enrollment of teacherEnrollments; trackBy: trackByEnrollmentId">
+          <p><strong>Student:</strong> {{ enrollment.student?.fullName }}</p>
+          <p><strong>Course:</strong> {{ enrollment.course?.courseName }}</p>
+          <p><strong>Enrollment Date:</strong> {{ enrollment.enrollmentDate }}</p>
+
+          <div class="action-buttons">
+            <button class="danger" (click)="removeEnrollment(enrollment.enrollmentId)">
+              Remove Enrollment
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noTeacherEnrollments>
+        <p>No enrollment records found.</p>
+      </ng-template>
     </div>
   </div>
 </div>
-
-<ng-template #noAccess>
-  <div class="dashboard-container">
-    <h2>Dashboard</h2>
-    <p>This dashboard is available only for STUDENT users.</p>
-  </div>
-</ng-template>
