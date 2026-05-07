@@ -53,6 +53,7 @@ export class TeacherEditComponent implements OnInit {
       service.getTeacherById(this.teacherId).subscribe({
         next: (teacher: any) => {
           this.teacher = teacher;
+
           this.teacherForm.patchValue({
             fullName: teacher.fullName,
             contactNumber: teacher.contactNumber,
@@ -68,12 +69,18 @@ export class TeacherEditComponent implements OnInit {
     }
 
     if (service.getUserById) {
-      service.getUserById(this.userId).subscribe((user: any) => {
-        this.user = user;
-        this.teacherForm.patchValue({
-          username: user.username,
-          password: user.password
-        });
+      service.getUserById(this.userId).subscribe({
+        next: (user: any) => {
+          this.user = user;
+
+          this.teacherForm.patchValue({
+            username: user.username,
+            password: user.password
+          });
+        },
+        error: () => {
+          this.user = undefined;
+        }
       });
     }
   }
@@ -83,18 +90,19 @@ export class TeacherEditComponent implements OnInit {
     this.errorMessage = null;
 
     const service: any = this.educonnectService;
-
-    // ✅ keep payload exactly as form value (hidden tests typically assert this)
     const payload = this.teacherForm.value;
 
-    // ✅ do not fail too aggressively here; hidden test only checks successful valid submission
     if (service.updateTeacher) {
-      service.updateTeacher(payload).subscribe(() => {
-        this.successMessage = 'Teacher updated successfully!';
-        this.errorMessage = null;
+      service.updateTeacher(payload).subscribe({
+        next: () => {
+          this.successMessage = 'Teacher updated successfully!';
+          this.errorMessage = null;
+        },
+        error: () => {
+          this.successMessage = null;
+          this.errorMessage = 'Unable to update teacher.';
+        }
       });
-    } else {
-      this.errorMessage = 'Please fill in all required fields.';
     }
   }
 
