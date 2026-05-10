@@ -1,48 +1,163 @@
-<div class="student-edit-container">
-  <h2>Edit Student Profile</h2>
+<app-navbar></app-navbar>
 
-  <form [formGroup]="studentForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="username">Username</label>
-      <input id="username" formControlName="username" />
+<div class="student-edit-wrapper">
+  <div class="student-edit-container">
+    <h2>Edit Student Profile</h2>
+
+    <form [formGroup]="studentForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="Enter username"
+        />
+
+        <div
+          class="error"
+          *ngIf="studentForm.get('username')?.touched && studentForm.get('username')?.errors?.['required']"
+        >
+          Username is required.
+        </div>
+
+        <div
+          class="error"
+          *ngIf="studentForm.get('username')?.touched && studentForm.get('username')?.errors?.['pattern']"
+        >
+          Username should contain only letters and numbers.
+        </div>
+
+        <small class="help-text">
+          If username is changed, you will need to login again.
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input
+          id="fullName"
+          type="text"
+          formControlName="fullName"
+          placeholder="Enter full name"
+        />
+
+        <div
+          class="error"
+          *ngIf="studentForm.get('fullName')?.touched && studentForm.get('fullName')?.errors?.['required']"
+        >
+          Full Name is required.
+        </div>
+
+        <div
+          class="error"
+          *ngIf="studentForm.get('fullName')?.touched && studentForm.get('fullName')?.errors?.['minlength']"
+        >
+          Full Name must be at least 2 characters.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="dateOfBirth">Date Of Birth</label>
+        <input
+          id="dateOfBirth"
+          type="date"
+          formControlName="dateOfBirth"
+        />
+
+        <div
+          class="error"
+          *ngIf="studentForm.get('dateOfBirth')?.touched && studentForm.get('dateOfBirth')?.errors?.['required']"
+        >
+          Date of Birth is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="contactNumber">Contact Number</label>
+        <input
+          id="contactNumber"
+          type="text"
+          formControlName="contactNumber"
+          placeholder="Enter 10 digit contact number"
+        />
+
+        <div
+          class="error"
+          *ngIf="studentForm.get('contactNumber')?.touched && studentForm.get('contactNumber')?.errors?.['required']"
+        >
+          Contact Number is required.
+        </div>
+
+        <div
+          class="error"
+          *ngIf="studentForm.get('contactNumber')?.touched && studentForm.get('contactNumber')?.errors?.['pattern']"
+        >
+          Contact Number must be exactly 10 digits.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="Enter email"
+        />
+
+        <div
+          class="error"
+          *ngIf="studentForm.get('email')?.touched && studentForm.get('email')?.errors?.['required']"
+        >
+          Email is required.
+        </div>
+
+        <div
+          class="error"
+          *ngIf="studentForm.get('email')?.touched && studentForm.get('email')?.errors?.['email']"
+        >
+          Enter a valid email address.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Address</label>
+        <input
+          id="address"
+          type="text"
+          formControlName="address"
+          placeholder="Enter address"
+        />
+
+        <div
+          class="error"
+          *ngIf="studentForm.get('address')?.touched && studentForm.get('address')?.errors?.['required']"
+        >
+          Address is required.
+        </div>
+
+        <div
+          class="error"
+          *ngIf="studentForm.get('address')?.touched && studentForm.get('address')?.errors?.['minlength']"
+        >
+          Address must be at least 3 characters.
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button type="submit" class="save-btn">Save</button>
+        <button type="button" class="reset-btn" (click)="resetForm()">Reset</button>
+        <button type="button" class="dashboard-btn" (click)="goToDashboard()">Dashboard</button>
+      </div>
+    </form>
+
+    <div class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
     </div>
 
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input id="password" type="password" formControlName="password" />
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
     </div>
-
-    <div class="form-group">
-      <label for="fullName">Full Name</label>
-      <input id="fullName" formControlName="fullName" />
-    </div>
-
-    <div class="form-group">
-      <label for="dateOfBirth">Date of Birth</label>
-      <input id="dateOfBirth" type="date" formControlName="dateOfBirth" />
-    </div>
-
-    <div class="form-group">
-      <label for="contactNumber">Contact Number</label>
-      <input id="contactNumber" formControlName="contactNumber" />
-    </div>
-
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" />
-    </div>
-
-    <div class="form-group">
-      <label for="address">Address</label>
-      <textarea id="address" formControlName="address"></textarea>
-    </div>
-
-    <div class="button-group">
-      <button type="submit">Save</button>
-      <button type="button" (click)="resetForm()">Reset</button>
-    </div>
-  </form>
-
-  <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
-  <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+  </div>
 </div>

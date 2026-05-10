@@ -1,20 +1,16 @@
 package com.edutech.progressive.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,13 +23,17 @@ public class Teacher implements Comparable<Teacher> {
     private int teacherId;
 
     private String fullName;
+
     private String subject;
+
     private String contactNumber;
+
     private String email;
+
     private int yearsOfExperience;
 
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonIgnore
     private List<Course> courses = new ArrayList<>();
 
     public Teacher() {
@@ -106,7 +106,7 @@ public class Teacher implements Comparable<Teacher> {
     }
 
     @Override
-    public int compareTo(Teacher o) {
-        return Integer.compare(this.yearsOfExperience, o.yearsOfExperience);
+    public int compareTo(Teacher otherTeacher) {
+        return Integer.compare(this.yearsOfExperience, otherTeacher.yearsOfExperience);
     }
 }

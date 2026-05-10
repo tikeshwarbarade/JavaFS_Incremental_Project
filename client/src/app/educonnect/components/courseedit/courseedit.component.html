@@ -1,29 +1,68 @@
-<div class="course-edit-container">
-  <h2>Edit Course</h2>
+<app-navbar></app-navbar>
 
-  <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="courseName">Course Name</label>
-      <input id="courseName" formControlName="courseName" />
-    </div>
+<div class="course-edit-wrapper">
+  <div class="course-edit-container">
+    <h2>Edit Course</h2>
 
-    <div class="form-group">
-      <label for="description">Description</label>
-      <textarea id="description" formControlName="description"></textarea>
-    </div>
+    <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="courseName">Course Name</label>
+        <input
+          id="courseName"
+          type="text"
+          formControlName="courseName"
+          placeholder="Enter course name"
+        />
 
-    <div class="form-group">
-      <label for="teacherId">Teacher ID</label>
-      <input id="teacherId" type="number" formControlName="teacherId" />
-    </div>
+        <div
+          class="error"
+          *ngIf="courseForm.get('courseName')?.touched && courseForm.get('courseName')?.errors?.['required']"
+        >
+          Course Name is required.
+        </div>
+      </div>
 
-    <div class="button-group">
-      <button type="submit">Save</button>
-      <button type="button" (click)="resetForm()">Reset</button>
-      <button type="button" (click)="goBack()">Back</button>
-    </div>
-  </form>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          placeholder="Enter course description"
+        ></textarea>
 
-  <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
-  <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+        <div
+          class="error"
+          *ngIf="courseForm.get('description')?.touched && courseForm.get('description')?.errors?.['required']"
+        >
+          Description is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="teacherName">Teacher Name</label>
+        <input
+          id="teacherName"
+          type="text"
+          formControlName="teacherName"
+          placeholder="Teacher name"
+        />
+      </div>
+
+      <input type="hidden" formControlName="teacherId" />
+
+      <div class="button-group">
+        <button type="submit" class="save-btn">Save</button>
+        <button type="button" class="reset-btn" (click)="resetForm()">Reset</button>
+        <button type="button" class="back-btn" (click)="goBack()">Dashboard</button>
+      </div>
+    </form>
+
+    <p class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
+    </p>
+
+    <p class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </p>
+  </div>
 </div>

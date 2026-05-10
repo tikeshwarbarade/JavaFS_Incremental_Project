@@ -1,109 +1,203 @@
-<div class="registration-container">
-  <h2>Registration</h2>
+<div class="auth-page">
+  <div class="register-card">
+    <h2>Register</h2>
 
-  <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="username">Username</label>
-      <input id="username" type="text" formControlName="username" />
-      <div class="error" *ngIf="registrationForm.get('username')?.touched && registrationForm.get('username')?.errors?.['required']">
-        Username is required.
-      </div>
-      <div class="error" *ngIf="registrationForm.get('username')?.touched && registrationForm.get('username')?.errors?.['pattern']">
-        Username should not contain special characters.
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input id="password" type="password" formControlName="password" />
-      <div class="error" *ngIf="registrationForm.get('password')?.touched && registrationForm.get('password')?.errors?.['required']">
-        Password is required.
-      </div>
-      <div class="error" *ngIf="registrationForm.get('password')?.touched && registrationForm.get('password')?.errors?.['minlength']">
-        Password must be at least 8 characters long.
-      </div>
-      <div class="error" *ngIf="registrationForm.get('password')?.touched && registrationForm.get('password')?.errors?.['pattern']">
-        Password must contain at least one capital letter and one numeric character.
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="role">Role</label>
-      <select id="role" formControlName="role" (change)="onRoleChange($event)">
-        <option value="">Select Role</option>
-        <option value="STUDENT">STUDENT</option>
-        <option value="TEACHER">TEACHER</option>
-      </select>
-      <div class="error" *ngIf="registrationForm.get('role')?.touched && registrationForm.get('role')?.errors?.['required']">
-        Role is required.
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="fullName">Full Name</label>
-      <input id="fullName" type="text" formControlName="fullName" />
-      <div class="error" *ngIf="registrationForm.get('fullName')?.touched && registrationForm.get('fullName')?.errors?.['required']">
-        Full Name is required.
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="contactNumber">Contact Number</label>
-      <input id="contactNumber" type="text" formControlName="contactNumber" />
-      <div class="error" *ngIf="registrationForm.get('contactNumber')?.touched && registrationForm.get('contactNumber')?.errors?.['required']">
-        Contact Number is required.
-      </div>
-      <div class="error" *ngIf="registrationForm.get('contactNumber')?.touched && registrationForm.get('contactNumber')?.errors?.['pattern']">
-        Contact Number must be 10 digits.
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" />
-      <div class="error" *ngIf="registrationForm.get('email')?.touched && registrationForm.get('email')?.errors?.['required']">
-        Email is required.
-      </div>
-      <div class="error" *ngIf="registrationForm.get('email')?.touched && registrationForm.get('email')?.errors?.['email']">
-        Enter a valid email address.
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="address">Address</label>
-      <input id="address" type="text" formControlName="address" />
-    </div>
-
-    <div *ngIf="selectedRole === 'TEACHER'">
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="subject">Subject</label>
-        <input id="subject" type="text" formControlName="subject" />
+        <label for="username">Username:</label>
+        <input id="username" type="text" formControlName="username" />
+
+        <div
+          class="error"
+          *ngIf="registrationForm.get('username')?.touched && registrationForm.get('username')?.errors?.['required']"
+        >
+          Username is required.
+        </div>
+
+        <div
+          class="error"
+          *ngIf="registrationForm.get('username')?.touched && registrationForm.get('username')?.errors?.['pattern']"
+        >
+          Username should not contain special characters.
+        </div>
       </div>
 
       <div class="form-group">
-        <label for="yearsOfExperience">Years of Experience</label>
-        <input id="yearsOfExperience" type="number" formControlName="yearsOfExperience" />
-      </div>
-    </div>
+        <label for="password">Password:</label>
+        <input id="password" type="password" formControlName="password" />
 
-    <div *ngIf="selectedRole === 'STUDENT'">
+        <div
+          class="error"
+          *ngIf="registrationForm.get('password')?.touched && registrationForm.get('password')?.errors?.['required']"
+        >
+          Password is required.
+        </div>
+
+        <div
+          class="error"
+          *ngIf="registrationForm.get('password')?.touched && registrationForm.get('password')?.errors?.['minlength']"
+        >
+          Password must be at least 8 characters long.
+        </div>
+
+        <div
+          class="error"
+          *ngIf="registrationForm.get('password')?.touched && registrationForm.get('password')?.errors?.['pattern']"
+        >
+          Password must contain at least one capital letter and one numeric character.
+        </div>
+      </div>
+
       <div class="form-group">
-        <label for="dateOfBirth">Date of Birth</label>
-        <input id="dateOfBirth" type="date" formControlName="dateOfBirth" />
-      </div>
-    </div>
+        <label for="role">Role:</label>
+        <select id="role" formControlName="role" (change)="onRoleChange($event)">
+          <option value="">Select Role</option>
+          <option value="STUDENT">STUDENT</option>
+          <option value="TEACHER">TEACHER</option>
+        </select>
 
-    <div class="button-group">
+        <div
+          class="error"
+          *ngIf="registrationForm.get('role')?.touched && registrationForm.get('role')?.errors?.['required']"
+        >
+          Role is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="fullName">Full Name:</label>
+        <input id="fullName" type="text" formControlName="fullName" />
+
+        <div
+          class="error"
+          *ngIf="registrationForm.get('fullName')?.touched && registrationForm.get('fullName')?.errors?.['required']"
+        >
+          Full Name is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="contactNumber">Contact Number:</label>
+        <input id="contactNumber" type="text" formControlName="contactNumber" />
+
+        <div
+          class="error"
+          *ngIf="registrationForm.get('contactNumber')?.touched && registrationForm.get('contactNumber')?.errors?.['required']"
+        >
+          Contact Number is required.
+        </div>
+
+        <div
+          class="error"
+          *ngIf="registrationForm.get('contactNumber')?.touched && registrationForm.get('contactNumber')?.errors?.['pattern']"
+        >
+          Contact Number must be 10 digits.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input id="email" type="email" formControlName="email" />
+
+        <div
+          class="error"
+          *ngIf="registrationForm.get('email')?.touched && registrationForm.get('email')?.errors?.['required']"
+        >
+          Email is required.
+        </div>
+
+        <div
+          class="error"
+          *ngIf="registrationForm.get('email')?.touched && registrationForm.get('email')?.errors?.['email']"
+        >
+          Enter a valid email address.
+        </div>
+      </div>
+
+      <div *ngIf="selectedRole === 'STUDENT'">
+        <div class="form-group">
+          <label for="dateOfBirth">Date Of Birth:</label>
+          <input id="dateOfBirth" type="date" formControlName="dateOfBirth" />
+
+          <div
+            class="error"
+            *ngIf="registrationForm.get('dateOfBirth')?.touched && registrationForm.get('dateOfBirth')?.errors?.['required']"
+          >
+            Date of Birth is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="address">Address:</label>
+          <input id="address" type="text" formControlName="address" />
+
+          <div
+            class="error"
+            *ngIf="registrationForm.get('address')?.touched && registrationForm.get('address')?.errors?.['required']"
+          >
+            Address is required.
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="selectedRole === 'TEACHER'">
+        <div class="form-group">
+          <label for="subject">Subject:</label>
+          <input id="subject" type="text" formControlName="subject" />
+
+          <div
+            class="error"
+            *ngIf="registrationForm.get('subject')?.touched && registrationForm.get('subject')?.errors?.['required']"
+          >
+            Subject is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="yearsOfExperience">Years Of Experience:</label>
+          <input
+            id="yearsOfExperience"
+            type="number"
+            formControlName="yearsOfExperience"
+          />
+
+          <div
+            class="error"
+            *ngIf="registrationForm.get('yearsOfExperience')?.touched && registrationForm.get('yearsOfExperience')?.errors?.['required']"
+          >
+            Years of Experience is required.
+          </div>
+
+          <div
+            class="error"
+            *ngIf="registrationForm.get('yearsOfExperience')?.touched && registrationForm.get('yearsOfExperience')?.errors?.['min']"
+          >
+            Years of Experience must be at least 1.
+          </div>
+        </div>
+      </div>
+
       <button type="submit">Register</button>
-      <button type="button" (click)="resetForm()">Reset</button>
+    </form>
+
+    <p class="link-text">
+      <a routerLink="/auth/login">Login</a>
+    </p>
+
+    <div class="toast-message success-toast" *ngIf="showSuccessBox">
+      <div class="toast-icon">✓</div>
+      <div class="toast-content">
+        <strong>Success</strong>
+        <span>{{ successMessage }}</span>
+      </div>
     </div>
-  </form>
 
-  <div class="success-message" *ngIf="successMessage">
-    {{ successMessage }}
-  </div>
-
-  <div class="error-message" *ngIf="errorMessage">
-    {{ errorMessage }}
+    <div class="toast-message error-toast" *ngIf="showErrorBox">
+      <div class="toast-icon">!</div>
+      <div class="toast-content">
+        <strong>Error</strong>
+        <span>{{ errorMessage }}</span>
+      </div>
+    </div>
   </div>
 </div>

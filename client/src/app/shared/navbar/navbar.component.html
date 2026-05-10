@@ -1,13 +1,36 @@
 <nav class="navbar">
   <div class="brand" (click)="goToDashboard()">EduConnect</div>
 
+  <div class="nav-links">
+    <button
+      *ngIf="role === 'TEACHER'"
+      type="button"
+      class="nav-link-button"
+      (click)="goToCourseCreate()"
+    >
+      Add Course
+    </button>
+
+    <button
+      type="button"
+      class="nav-link-button"
+      (click)="goToEnrollment()"
+    >
+      Add Enrollment
+    </button>
+  </div>
+
   <div class="nav-right">
     <span *ngIf="role === 'STUDENT'" class="welcome-text">
-      Welcome {{ studentName || 'Student' }}
+      {{ studentName || 'Student' }}
     </span>
 
-    <button *ngIf="role === 'STUDENT'" (click)="goToEnrollment()">Enroll</button>
-    <button (click)="goToDashboard()">Dashboard</button>
-    <button (click)="logout()">Logout</button>
+    <span *ngIf="role === 'TEACHER'" class="welcome-text">
+      {{ teacherName || 'Teacher' }}
+    </span>
+
+    <button type="button" class="logout-btn" (click)="logout()">
+      Logout
+    </button>
   </div>
 </nav>

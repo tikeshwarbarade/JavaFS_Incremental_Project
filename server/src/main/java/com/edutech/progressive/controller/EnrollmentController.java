@@ -2,6 +2,7 @@ package com.edutech.progressive.controller;
 
 import com.edutech.progressive.entity.Enrollment;
 import com.edutech.progressive.service.impl.EnrollmentServiceImpl;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,6 @@ public class EnrollmentController {
     @Autowired
     private EnrollmentServiceImpl enrollmentServiceImpl;
 
-    // GET /enrollment
     @GetMapping
     public ResponseEntity<List<Enrollment>> getAllEnrollments() {
         try {
@@ -26,7 +26,6 @@ public class EnrollmentController {
         }
     }
 
-    // POST /enrollment
     @PostMapping
     public ResponseEntity<Integer> createEnrollment(@RequestBody Enrollment enrollment) {
         try {
@@ -39,7 +38,6 @@ public class EnrollmentController {
         }
     }
 
-    // PUT /enrollment/{enrollmentId}
     @PutMapping("/{enrollmentId}")
     public ResponseEntity<Void> updateEnrollment(@PathVariable int enrollmentId,
                                                  @RequestBody Enrollment enrollment) {
@@ -54,7 +52,18 @@ public class EnrollmentController {
         }
     }
 
-    // GET /enrollment/{enrollmentId}
+    @DeleteMapping("/{enrollmentId}")
+    public ResponseEntity<Void> deleteEnrollment(@PathVariable int enrollmentId) {
+        try {
+            enrollmentServiceImpl.deleteEnrollment(enrollmentId);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @GetMapping("/{enrollmentId}")
     public ResponseEntity<Enrollment> getEnrollmentById(@PathVariable int enrollmentId) {
         try {
@@ -66,7 +75,6 @@ public class EnrollmentController {
         }
     }
 
-    // GET /enrollment/student/{studentId}
     @GetMapping("/student/{studentId}")
     public ResponseEntity<List<Enrollment>> getAllEnrollmentsByStudent(@PathVariable int studentId) {
         try {
@@ -76,7 +84,6 @@ public class EnrollmentController {
         }
     }
 
-    // GET /enrollment/course/{courseId}
     @GetMapping("/course/{courseId}")
     public ResponseEntity<List<Enrollment>> getAllEnrollmentsByCourse(@PathVariable int courseId) {
         try {

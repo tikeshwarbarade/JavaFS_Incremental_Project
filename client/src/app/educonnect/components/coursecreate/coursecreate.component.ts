@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
 import { EduConnectService } from '../../services/educonnect.service';
-import { Teacher } from '../../models/Teacher';
-import { Course } from '../../models/Course';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-coursecreate',
@@ -11,35 +12,55 @@ import { Course } from '../../models/Course';
 })
 export class CourseCreateComponent implements OnInit {
   courseForm!: FormGroup;
+
   successMessage: string | null = null;
   errorMessage: string | null = null;
 
-  teacher: Teacher | null = null;
   teacherId: number = 0;
+  teacherName: string = '';
 
   constructor(
-    private fb: FormBuilder,
-    private service: EduConnectService
+    private formBuilder: FormBuilder,
+    private eduConnectService: EduConnectService,
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.courseForm = this.fb.group({
+    this.teacherId = this.authService.getTeacherId();
+
+    this.courseForm = this.formBuilder.group({
       courseId: [0],
       courseName: ['', Validators.required],
-      description: [''],
-      teacherId: [0, Validators.required]
+      description: ['', Validators.required],
+      teacherId: [this.teacherId || 0, Validators.required],
+      teacherName: [{ value: '', disabled: true }]
     });
 
-    // Day 23 hidden test expects this call
-    this.service.getTeacherById(this.teacherId).subscribe({
-      next: (teacher: Teacher) => {
-        this.teacher = teacher;
+    this.loadTeacherDetails();
+  }
+
+  loadTeacherDetails(): void {
+    this.successMessage = null;
+    this.errorMessage = null;
+
+    if (!this.teacherId || this.teacherId === 0) {
+      this.errorMessage = 'Teacher ID not found. Please login again.';
+      return;
+    }
+
+    this.eduConnectService.getTeacherById(this.teacherId).subscribe({
+      next: (teacher: any) => {
+        this.teacherName = teacher.fullName || '';
+
         this.courseForm.patchValue({
-          teacherId: teacher.teacherId
+          teacherId: teacher.teacherId,
+          teacherName: teacher.fullName
         });
       },
-      error: () => {
-        this.teacher = null;
+      error: (error: any) => {
+        console.error('Failed to load teacher details:', error);
+        this.errorMessage = 'Unable to load teacher details.';
       }
     });
   }
@@ -54,34 +75,33 @@ export class CourseCreateComponent implements OnInit {
       return;
     }
 
-    const value = this.courseForm.value;
+    const formValue = this.courseForm.getRawValue();
 
-    const teacherToUse =
-      this.teacher ??
-      new Teacher(
-        value.teacherId ?? 0,
-        '',
-        '',
-        '',
-        '',
-        0
-      );
+    const coursePayload = {
+      courseId: 0,
+      courseName: formValue.courseName,
+      description: formValue.description,
+      teacher: {
+        teacherId: Number(formValue.teacherId)
+      }
+    };
 
-    const course = new Course(
-      value.courseId ?? 0,
-      value.courseName,
-      value.description,
-      teacherToUse
-    );
+    console.log('Course Create Payload:', coursePayload);
 
-    this.service.addCourse(course).subscribe({
+    this.eduConnectService.addCourse(coursePayload).subscribe({
       next: () => {
         this.successMessage = 'Course created successfully!';
         this.errorMessage = null;
+        this.resetFormAfterSuccess();
       },
-      error: () => {
-        this.errorMessage = 'Failed to create course.';
+      error: (error: any) => {
+        console.error('Failed to create course:', error);
+
         this.successMessage = null;
+        this.errorMessage =
+          error?.error?.message ||
+          error?.error ||
+          'Failed to create course.';
       }
     });
   }
@@ -91,9 +111,25 @@ export class CourseCreateComponent implements OnInit {
       courseId: 0,
       courseName: '',
       description: '',
-      teacherId: 0
+      teacherId: this.teacherId || 0,
+      teacherName: this.teacherName || ''
     });
+
     this.successMessage = null;
     this.errorMessage = null;
+  }
+
+  resetFormAfterSuccess(): void {
+    this.courseForm.patchValue({
+      courseId: 0,
+      courseName: '',
+      description: '',
+      teacherId: this.teacherId || 0,
+      teacherName: this.teacherName || ''
+    });
+  }
+
+  goToDashboard(): void {
+    this.router.navigate(['/educonnect/dashboard']);
   }
 }

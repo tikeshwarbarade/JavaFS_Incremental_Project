@@ -1,46 +1,72 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavBarComponent {
+export class NavBarComponent implements OnInit {
   role: string = '';
   studentName: string = '';
+  teacherName: string = '';
 
-  constructor() {
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
     this.loadUser();
   }
 
   loadUser(): void {
-    const rawUser =
-      localStorage.getItem('currentUser') ||
-      localStorage.getItem('loginResponse');
+    this.role = this.authService.getRole ? this.authService.getRole() : '';
 
-    if (rawUser) {
-      const user = JSON.parse(rawUser);
-      this.role = user.role || user.roles || '';
+    const currentStudent = localStorage.getItem('currentStudent');
+    const currentTeacher = localStorage.getItem('currentTeacher');
 
-      if (this.role === 'STUDENT') {
-        const studentRaw = localStorage.getItem('currentStudent');
-        if (studentRaw) {
-          const student = JSON.parse(studentRaw);
-          this.studentName = student.fullName || '';
-        }
+    if (currentStudent) {
+      try {
+        const student = JSON.parse(currentStudent);
+        this.studentName = student.fullName || '';
+      } catch {
+        this.studentName = '';
+      }
+    }
+
+    if (currentTeacher) {
+      try {
+        const teacher = JSON.parse(currentTeacher);
+        this.teacherName = teacher.fullName || '';
+      } catch {
+        this.teacherName = '';
       }
     }
   }
 
-  goToEnrollment(): void {
-    localStorage.setItem('dashboardSection', 'enrollment');
+  goToDashboard(): void {
+    this.router.navigate(['/educonnect/dashboard']);
   }
 
-  goToDashboard(): void {
-    localStorage.setItem('dashboardSection', 'dashboard');
+  goToEnrollment(): void {
+    this.router.navigate(['/educonnect/enrollment']);
+  }
+
+  goToCourseCreate(): void {
+    this.router.navigate(['/educonnect/course']);
   }
 
   logout(): void {
+    if (this.authService.logout) {
+      this.authService.logout();
+    }
+
     localStorage.removeItem('dashboardSection');
+    localStorage.removeItem('currentStudent');
+    localStorage.removeItem('currentTeacher');
+
+    this.router.navigate(['/auth/login']);
   }
 }

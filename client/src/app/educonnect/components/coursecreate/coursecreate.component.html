@@ -1,39 +1,74 @@
-<div class="course-form-container">
-  <h2>Create Course</h2>
+<app-navbar></app-navbar>
 
-  <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="courseName">Course Name</label>
-      <input id="courseName" type="text" formControlName="courseName" />
-      <div class="error" *ngIf="courseForm.get('courseName')?.touched && courseForm.get('courseName')?.errors?.['required']">
-        Course Name is required.
+<div class="page-wrapper">
+  <div class="course-form-container">
+    <h2>Create Course</h2>
+
+    <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="courseName">Course Name:</label>
+
+        <input
+          id="courseName"
+          type="text"
+          formControlName="courseName"
+          placeholder="Enter course name"
+        />
+
+        <div
+          class="error"
+          *ngIf="courseForm.get('courseName')?.touched && courseForm.get('courseName')?.errors?.['required']"
+        >
+          Course Name is required.
+        </div>
       </div>
-    </div>
 
-    <div class="form-group">
-      <label for="description">Description</label>
-      <textarea id="description" rows="4" formControlName="description"></textarea>
-    </div>
+      <div class="form-group">
+        <label for="description">Description:</label>
 
-    <div class="form-group">
-      <label for="teacherId">Teacher ID</label>
-      <input id="teacherId" type="number" formControlName="teacherId" />
-      <div class="error" *ngIf="courseForm.get('teacherId')?.touched && courseForm.get('teacherId')?.errors?.['required']">
-        Teacher ID is required.
+        <textarea
+          id="description"
+          rows="4"
+          formControlName="description"
+          placeholder="Enter course description"
+        ></textarea>
+
+        <div
+          class="error"
+          *ngIf="courseForm.get('description')?.touched && courseForm.get('description')?.errors?.['required']"
+        >
+          Description is required.
+        </div>
       </div>
+
+      <div class="form-group">
+        <label for="teacherName">Teacher Name:</label>
+
+        <input
+          id="teacherName"
+          type="text"
+          formControlName="teacherName"
+          placeholder="Teacher name"
+        />
+      </div>
+
+      <input type="hidden" formControlName="teacherId" />
+
+      <div class="button-group">
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+
+    <div class="dashboard-link">
+      <a (click)="goToDashboard()">Dashboard</a>
     </div>
 
-    <div class="button-group">
-      <button type="submit">Create Course</button>
-      <button type="button" (click)="resetForm()">Reset</button>
+    <div class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
     </div>
-  </form>
 
-  <div class="success-message" *ngIf="successMessage">
-    {{ successMessage }}
-  </div>
-
-  <div class="error-message" *ngIf="errorMessage">
-    {{ errorMessage }}
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
   </div>
 </div>

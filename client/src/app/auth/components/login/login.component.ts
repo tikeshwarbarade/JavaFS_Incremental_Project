@@ -21,21 +21,8 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
-      username: [
-        '',
-        [
-          Validators.required,
-          Validators.pattern(/^[a-zA-Z0-9]+$/)
-        ]
-      ],
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.pattern(/^(?=.*[A-Z])(?=.*[0-9]).{8,}$/)
-        ]
-      ]
+      username: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)]],
+      password: ['', [Validators.required, Validators.minLength(8)]]
     });
   }
 
@@ -50,9 +37,13 @@ export class LoginComponent implements OnInit {
     }
 
     this.authService.login(this.loginForm.value).subscribe({
-      next: () => {
+      next: (response: any) => {
+        this.authService.saveLoginResponse(response);
+
         this.successMessage = 'Login successful!';
         this.errorMessage = null;
+
+        this.router.navigate(['/educonnect/dashboard']);
       },
       error: () => {
         this.errorMessage = 'Login failed. Please try again.';

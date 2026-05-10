@@ -1,41 +1,78 @@
 .navbar {
+  width: 100%;
+  min-height: 52px;
+  background-color: #24394d;
+  color: #ffffff;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background-color: #1f3c88;
-  color: white;
-  padding: 12px 20px;
-  flex-wrap: wrap;
+  padding: 0 22px;
+  box-sizing: border-box;
+  gap: 28px;
 }
 
 .brand {
-  font-size: 22px;
-  font-weight: bold;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex: 1;
+}
+
+.nav-link-button {
+  background: transparent;
+  color: #ffffff;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+.nav-link-button:hover {
+  text-decoration: underline;
 }
 
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 14px;
 }
 
 .welcome-text {
-  font-size: 14px;
-  margin-right: 8px;
+  font-size: 12px;
+  color: #ffffff;
 }
 
-button {
-  background-color: #ffffff;
-  color: #1f3c88;
+.logout-btn {
+  background-color: #f44336;
+  color: #ffffff;
   border: none;
-  border-radius: 6px;
+  border-radius: 3px;
   padding: 8px 14px;
   cursor: pointer;
+  font-size: 12px;
   font-weight: 600;
 }
 
-button:hover {
-  background-color: #e5e9f2;
+.logout-btn:hover {
+  background-color: #d83227;
+}
+
+@media (max-width: 700px) {
+  .navbar {
+    flex-wrap: wrap;
+    padding: 10px 16px;
+    gap: 12px;
+  }
+
+  .nav-links {
+    width: 100%;
+    order: 3;
+  }
 }

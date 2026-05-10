@@ -1,38 +1,179 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { EduconnectService } from '../../services/educonnect.service';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
+  selector: 'app-enrollment',
   templateUrl: './enrollment.component.html',
   styleUrls: ['./enrollment.component.scss']
 })
-export class EnrollmentComponent {
+export class EnrollmentComponent implements OnInit {
+  enrollmentForm!: FormGroup;
+
   availableCourses: any[] = [];
-  enrolledCourseIds: number[] = [];
+  students: any[] = [];
+
   successMessage: string | null = null;
   errorMessage: string | null = null;
 
-  constructor() {
-    const coursesRaw = localStorage.getItem('allCourses');
-    this.availableCourses = coursesRaw ? JSON.parse(coursesRaw) : [];
+  role: string = '';
+  studentId: number = 0;
+  currentStudentName: string = '';
 
-    const enrollmentsRaw = localStorage.getItem('currentEnrollments');
-    this.enrolledCourseIds = enrollmentsRaw ? JSON.parse(enrollmentsRaw) : [];
+  constructor(
+    private fb: FormBuilder,
+    private service: EduconnectService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    const auth: any = this.authService;
+
+    this.role = auth.getRole ? auth.getRole() : '';
+    this.studentId = auth.getStudentId ? auth.getStudentId() : 0;
+
+    this.enrollmentForm = this.fb.group({
+      courseId: ['', Validators.required],
+      studentId: [
+        this.role === 'STUDENT' && this.studentId ? this.studentId : '',
+        Validators.required
+      ],
+      enrollmentDate: ['', Validators.required]
+    });
+
+    this.loadCourses();
+    this.loadStudentsBasedOnRole();
   }
 
-  isEnrolled(courseId: number): boolean {
-    return this.enrolledCourseIds.includes(courseId);
+  loadCourses(): void {
+    this.service.getAllCourses().subscribe({
+      next: (courses: any[]) => {
+        this.availableCourses = courses || [];
+        localStorage.setItem('allCourses', JSON.stringify(this.availableCourses));
+      },
+      error: (error: any) => {
+        console.error('Failed to load courses:', error);
+        this.availableCourses = [];
+      }
+    });
   }
 
-  enroll(course: any): void {
-    this.successMessage = null;
-    this.errorMessage = null;
+  loadStudentsBasedOnRole(): void {
+    if (this.role === 'STUDENT') {
+      if (!this.studentId) {
+        this.errorMessage = 'Student ID not found. Please login again.';
+        return;
+      }
 
-    if (this.isEnrolled(course.courseId)) {
-      this.errorMessage = 'You are already enrolled in this course.';
+      this.service.getStudentById(this.studentId).subscribe({
+        next: (student: any) => {
+          this.students = [student];
+          this.currentStudentName = student.fullName;
+
+          this.enrollmentForm.patchValue({
+            studentId: student.studentId
+          });
+        },
+        error: (error: any) => {
+          console.error('Failed to load logged-in student:', error);
+          this.students = [];
+          this.errorMessage = 'Unable to load logged-in student details.';
+        }
+      });
+
       return;
     }
 
-    this.enrolledCourseIds.push(course.courseId);
-    localStorage.setItem('currentEnrollments', JSON.stringify(this.enrolledCourseIds));
-    this.successMessage = `Successfully enrolled in ${course.courseName}.`;
+    if (this.role === 'TEACHER') {
+      this.service.getAllStudents().subscribe({
+        next: (students: any[]) => {
+          this.students = students || [];
+        },
+        error: (error: any) => {
+          console.error('Failed to load students:', error);
+          this.students = [];
+        }
+      });
+    }
+  }
+
+  onSubmit(): void {
+    this.successMessage = null;
+    this.errorMessage = null;
+
+    if (this.enrollmentForm.invalid) {
+      this.enrollmentForm.markAllAsTouched();
+      this.errorMessage = 'Please fill out all fields correctly.';
+      return;
+    }
+
+    const formValue = this.enrollmentForm.value;
+
+    const finalStudentId =
+      this.role === 'STUDENT'
+        ? this.studentId
+        : Number(formValue.studentId);
+
+    const enrollmentPayload: any = {
+      enrollmentId: 0,
+      course: {
+        courseId: Number(formValue.courseId)
+      },
+      student: {
+        studentId: Number(finalStudentId)
+      },
+      enrollmentDate: formValue.enrollmentDate
+    };
+
+    this.service.createEnrollment(enrollmentPayload).subscribe({
+      next: () => {
+        this.successMessage = 'Enrollment created successfully!';
+        this.errorMessage = null;
+
+        this.enrollmentForm.patchValue({
+          courseId: '',
+          enrollmentDate: ''
+        });
+
+        if (this.role === 'TEACHER') {
+          this.enrollmentForm.patchValue({
+            studentId: ''
+          });
+        }
+
+        if (this.role === 'STUDENT') {
+          this.enrollmentForm.patchValue({
+            studentId: this.studentId
+          });
+        }
+      },
+      error: (error: any) => {
+        console.error('Failed to create enrollment:', error);
+        this.successMessage = null;
+        this.errorMessage =
+          error?.error?.message ||
+          error?.error ||
+          'Failed to create enrollment.';
+      }
+    });
+  }
+
+  resetForm(): void {
+    this.enrollmentForm.reset({
+      courseId: '',
+      studentId: this.role === 'STUDENT' && this.studentId ? this.studentId : '',
+      enrollmentDate: ''
+    });
+
+    this.successMessage = null;
+    this.errorMessage = null;
+  }
+
+  goToDashboard(): void {
+    this.router.navigate(['/educonnect/dashboard']);
   }
 }

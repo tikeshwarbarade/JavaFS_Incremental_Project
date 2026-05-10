@@ -3,22 +3,30 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
+    path: '',
+    redirectTo: 'auth',
+    pathMatch: 'full'
+  },
+  {
     path: 'auth',
-    loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
+    loadChildren: () =>
+      import('./auth/auth.module').then((m) => m.AuthModule)
   },
   {
     path: 'educonnect',
-    loadChildren: () => import('./educonnect/educonnect.module').then((m) => m.EduconnectModule),
+    loadChildren: () =>
+      import('./educonnect/educonnect.module').then((m) => m.EduconnectModule)
   },
   {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: '/auth',  // Redirect to 'auth' route by default
+    path: '**',
+    redirectTo: 'auth'
   }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
+  imports: [
+    RouterModule.forRoot(routes, { useHash: true })
+  ],
+  exports: [RouterModule]
 })
 export class AppRoutingModule {}

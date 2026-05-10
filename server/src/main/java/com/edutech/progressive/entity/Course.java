@@ -1,7 +1,7 @@
 package com.edutech.progressive.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -16,11 +16,12 @@ public class Course {
     private int courseId;
 
     private String courseName;
+
     private String description;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "teacher_id")
-    @JsonBackReference
+    @JsonIgnoreProperties({"courses", "hibernateLazyInitializer", "handler"})
     private Teacher teacher;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -35,6 +36,13 @@ public class Course {
         this.courseName = courseName;
         this.description = description;
         setTeacherId(teacherId);
+    }
+
+    public Course(int courseId, String courseName, String description, Teacher teacher) {
+        this.courseId = courseId;
+        this.courseName = courseName;
+        this.description = description;
+        this.teacher = teacher;
     }
 
     public int getCourseId() {
@@ -77,17 +85,16 @@ public class Course {
         this.enrollments = enrollments;
     }
 
-    // Compatibility helper for older code/tests
     @Transient
     public int getTeacherId() {
-        return (teacher != null) ? teacher.getTeacherId() : 0;
+        return teacher != null ? teacher.getTeacherId() : 0;
     }
 
-    // Compatibility helper for older code/tests
     public void setTeacherId(int teacherId) {
-        if (this.teacher == null) {
-            this.teacher = new Teacher();
+        if (teacherId > 0) {
+            Teacher teacherRef = new Teacher();
+            teacherRef.setTeacherId(teacherId);
+            this.teacher = teacherRef;
         }
-        this.teacher.setTeacherId(teacherId);
     }
 }

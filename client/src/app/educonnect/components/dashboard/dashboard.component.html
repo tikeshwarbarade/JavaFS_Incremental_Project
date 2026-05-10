@@ -1,105 +1,215 @@
-<div class="dashboard-container">
-  <h2 *ngIf="role === 'STUDENT'">Student Dashboard</h2>
-  <h2 *ngIf="role === 'TEACHER'">Teacher Dashboard</h2>
+<app-navbar></app-navbar>
 
-  <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
-  <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+<div class="dashboard-wrapper">
+  <div class="dashboard-container">
+    <h2 *ngIf="role === 'STUDENT'">Student Dashboard</h2>
+    <h2 *ngIf="role === 'TEACHER'">Teacher Dashboard</h2>
 
-  <!-- STUDENT VIEW -->
-  <div *ngIf="role === 'STUDENT'">
-    <div class="profile-card" *ngIf="studentDetails">
-      <h3>My Profile</h3>
-      <p><strong>Name:</strong> {{ studentDetails.fullName }}</p>
-      <p><strong>Email:</strong> {{ studentDetails.email }}</p>
-      <p><strong>Date of Birth:</strong> {{ studentDetails.dateOfBirth }}</p>
-      <p><strong>Contact Number:</strong> {{ studentDetails.contactNumber }}</p>
-      <p><strong>Address:</strong> {{ studentDetails.address }}</p>
+    <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-      <div class="action-buttons">
-        <button (click)="editProfile()">Update Profile</button>
-        <button class="danger" (click)="deleteProfile()">Delete Profile</button>
-      </div>
+    <div class="empty-role-message" *ngIf="!role">
+      <h2>EduConnect Dashboard</h2>
+      <p>Please login to view your dashboard.</p>
     </div>
 
-    <div class="section-card">
-      <h3>Enrolled Courses</h3>
-      <div *ngIf="enrollments.length > 0; else noStudentEnrollments">
-        <div class="course-card" *ngFor="let enrollment of enrollments">
-          <p><strong>Course Name:</strong> {{ enrollment.course?.courseName }}</p>
-          <p><strong>Description:</strong> {{ enrollment.course?.description }}</p>
-          <p><strong>Teacher:</strong> {{ enrollment.course?.teacher?.fullName }}</p>
+    <div *ngIf="role === 'STUDENT'">
+      <div class="section-card" *ngIf="studentDetails">
+        <h3>Student Details</h3>
+
+        <p><strong>Name:</strong> {{ studentDetails.fullName }}</p>
+        <p><strong>Email:</strong> {{ studentDetails.email }}</p>
+        <p><strong>Date Of Birth:</strong> {{ studentDetails.dateOfBirth | date:'mediumDate' }}</p>
+        <p><strong>Contact Number:</strong> {{ studentDetails.contactNumber }}</p>
+
+        <div class="action-buttons">
+          <button class="btn-edit" type="button" (click)="editProfile()">Edit</button>
+          <button class="btn-delete" type="button" (click)="openDeleteModal('student')">Delete</button>
         </div>
       </div>
-      <ng-template #noStudentEnrollments>
-        <p>No enrolled courses found.</p>
-      </ng-template>
+
+      <div class="section-card">
+        <h3>Enrolled Courses Details</h3>
+
+        <table *ngIf="enrollments.length > 0; else noStudentEnrollments">
+          <thead>
+            <tr>
+              <th>Course Name</th>
+              <th>Teacher Name</th>
+              <th>Student Name</th>
+              <th>Enrollment Date</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let enrollment of enrollments">
+              <td>{{ enrollment.course?.courseName }}</td>
+              <td>{{ enrollment.course?.teacher?.fullName }}</td>
+              <td>{{ enrollment.student?.fullName || studentDetails?.fullName }}</td>
+              <td>{{ enrollment.enrollmentDate | date:'mediumDate' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #noStudentEnrollments>
+          <div class="alert-box">No enrollments available.</div>
+        </ng-template>
+      </div>
+
+      <div class="section-card">
+        <h3>All Available Courses</h3>
+
+        <table *ngIf="courses.length > 0; else noCourses">
+          <thead>
+            <tr>
+              <th>Course Id</th>
+              <th>Course Name</th>
+              <th>Description</th>
+              <th>Teacher Name</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let course of courses; trackBy: trackByCourseId">
+              <td>{{ course.courseId }}</td>
+              <td>{{ course.courseName }}</td>
+              <td>{{ course.description }}</td>
+              <td>{{ course.teacher?.fullName }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #noCourses>
+          <div class="alert-box">No courses.</div>
+        </ng-template>
+      </div>
     </div>
 
-    <div class="section-card">
-      <h3>Available Courses</h3>
-      <div class="course-card" *ngFor="let course of courses; trackBy: trackByCourseId">
-        <p><strong>Course Name:</strong> {{ course.courseName }}</p>
-        <p><strong>Description:</strong> {{ course.description }}</p>
-        <p><strong>Teacher:</strong> {{ course.teacher?.fullName }}</p>
-        <p><strong>Specialty:</strong> {{ course.teacher?.specialty || course.teacher?.subject }}</p>
+    <div *ngIf="role === 'TEACHER'">
+      <div class="section-card" *ngIf="teacherDetails">
+        <h3>Teacher Details</h3>
+
+        <p><strong>Name:</strong> {{ teacherDetails.fullName }}</p>
+        <p><strong>Email:</strong> {{ teacherDetails.email }}</p>
+        <p><strong>Subject:</strong> {{ teacherDetails.subject }}</p>
+        <p><strong>Years of Experience:</strong> {{ teacherDetails.yearsOfExperience }}</p>
+
+        <div class="action-buttons">
+          <button class="btn-edit" type="button" (click)="editProfile()">Edit</button>
+          <button class="btn-delete" type="button" (click)="openDeleteModal('teacher')">Delete</button>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h3>Courses</h3>
+
+        <table *ngIf="courses.length > 0; else noTeacherCourses">
+          <thead>
+            <tr>
+              <th>Course Id</th>
+              <th>Course Name</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let course of courses; trackBy: trackByCourseId">
+              <td>{{ course.courseId }}</td>
+              <td>{{ course.courseName }}</td>
+              <td>{{ course.description }}</td>
+              <td>
+                <button class="btn-edit" type="button" (click)="editCourse(course)">Edit</button>
+                <button class="btn-delete" type="button" (click)="deleteCourse(course.courseId)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #noTeacherCourses>
+          <div class="alert-box">No courses.</div>
+        </ng-template>
+      </div>
+
+      <div class="section-card">
+        <h3>Enrollment in Selected Course - {{ courses.length > 0 ? courses[0]?.courseId : '' }}</h3>
+
+        <table *ngIf="teacherEnrollments.length > 0; else noTeacherEnrollments">
+          <thead>
+            <tr>
+              <th>Course Name</th>
+              <th>Student Name</th>
+              <th>Enrollment Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let enrollment of teacherEnrollments; trackBy: trackByEnrollmentId">
+              <td>{{ enrollment.course?.courseName }}</td>
+              <td>{{ enrollment.student?.fullName }}</td>
+              <td>{{ enrollment.enrollmentDate | date:'mediumDate' }}</td>
+              <td>
+                <button class="btn-delete" type="button" (click)="removeEnrollment(enrollment.enrollmentId)">
+                  Remove
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #noTeacherEnrollments>
+          <div class="alert-box">No enrollments available.</div>
+        </ng-template>
+      </div>
+
+      <div class="section-card">
+        <h3>Students</h3>
+
+        <table *ngIf="students.length > 0; else noStudents">
+          <thead>
+            <tr>
+              <th>Student Id</th>
+              <th>Student Name</th>
+              <th>Date of Birth</th>
+              <th>Contact Number</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let student of students; trackBy: trackByStudentId">
+              <td>{{ student.studentId }}</td>
+              <td>{{ student.fullName }}</td>
+              <td>{{ student.dateOfBirth | date:'mediumDate' }}</td>
+              <td>{{ student.contactNumber }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #noStudents>
+          <div class="alert-box">No students available.</div>
+        </ng-template>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- TEACHER VIEW -->
-  <div *ngIf="role === 'TEACHER'">
-    <div class="profile-card" *ngIf="teacherDetails">
-      <h3>My Profile</h3>
-      <p><strong>Name:</strong> {{ teacherDetails.fullName }}</p>
-      <p><strong>Email:</strong> {{ teacherDetails.email }}</p>
-      <p><strong>Contact Number:</strong> {{ teacherDetails.contactNumber }}</p>
-      <p><strong>Subject:</strong> {{ teacherDetails.subject }}</p>
-      <p><strong>Years of Experience:</strong> {{ teacherDetails.yearsOfExperience }}</p>
+<div class="modal-overlay" *ngIf="showDeleteModal">
+  <div class="delete-modal">
+    <div class="modal-icon">!</div>
 
-      <div class="action-buttons">
-        <button (click)="editProfile()">Update Profile</button>
-        <button class="danger" (click)="deleteTeacher()">Delete Profile</button>
-      </div>
-    </div>
+    <h3>{{ deleteModalTitle }}</h3>
 
-    <div class="section-card">
-      <h3>Managed Courses</h3>
-      <div *ngIf="courses.length > 0; else noTeacherCourses">
-        <div class="course-card" *ngFor="let course of courses; trackBy: trackByCourseId">
-          <p><strong>Course Name:</strong> {{ course.courseName }}</p>
-          <p><strong>Description:</strong> {{ course.description }}</p>
+    <p>{{ deleteModalMessage }}</p>
 
-          <div class="action-buttons">
-            <button (click)="editCourse(course)">Edit Course</button>
-            <button class="danger" (click)="deleteCourse(course.courseId)">Delete Course</button>
-          </div>
-        </div>
-      </div>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" type="button" (click)="closeDeleteModal()">
+        Cancel
+      </button>
 
-      <ng-template #noTeacherCourses>
-        <p>No courses available for this teacher.</p>
-      </ng-template>
-    </div>
-
-    <div class="section-card">
-      <h3>Student Enrollments</h3>
-      <div *ngIf="teacherEnrollments.length > 0; else noTeacherEnrollments">
-        <div class="course-card" *ngFor="let enrollment of teacherEnrollments; trackBy: trackByEnrollmentId">
-          <p><strong>Student:</strong> {{ enrollment.student?.fullName }}</p>
-          <p><strong>Course:</strong> {{ enrollment.course?.courseName }}</p>
-          <p><strong>Enrollment Date:</strong> {{ enrollment.enrollmentDate }}</p>
-
-          <div class="action-buttons">
-            <button class="danger" (click)="removeEnrollment(enrollment.enrollmentId)">
-              Remove Enrollment
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <ng-template #noTeacherEnrollments>
-        <p>No enrollment records found.</p>
-      </ng-template>
+      <button class="modal-delete-btn" type="button" (click)="confirmDeleteAccount()">
+        Delete Account
+      </button>
     </div>
   </div>
 </div>
