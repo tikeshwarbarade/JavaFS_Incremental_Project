@@ -6,7 +6,7 @@
 
     <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="courseName">Course Name:</label>
+        <label for="courseName">Course Name</label>
 
         <input
           id="courseName"
@@ -24,7 +24,7 @@
       </div>
 
       <div class="form-group">
-        <label for="description">Description:</label>
+        <label for="description">Description</label>
 
         <textarea
           id="description"
@@ -42,7 +42,7 @@
       </div>
 
       <div class="form-group">
-        <label for="teacherName">Teacher Name:</label>
+        <label for="teacherName">Teacher Name</label>
 
         <input
           id="teacherName"
@@ -55,7 +55,9 @@
       <input type="hidden" formControlName="teacherId" />
 
       <div class="button-group">
-        <button type="submit">Submit</button>
+        <button type="submit">
+          Submit
+        </button>
       </div>
     </form>
 

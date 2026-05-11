@@ -1,36 +1,49 @@
-<nav class="navbar">
-  <div class="brand" (click)="goToDashboard()">EduConnect</div>
-
-  <div class="nav-links">
-    <button
-      *ngIf="role === 'TEACHER'"
-      type="button"
-      class="nav-link-button"
-      (click)="goToCourseCreate()"
-    >
-      Add Course
-    </button>
-
+<nav class="navbar navbar-expand-lg edu-navbar">
+  <div class="container-fluid edu-navbar-container">
     <button
       type="button"
-      class="nav-link-button"
-      (click)="goToEnrollment()"
+      class="navbar-brand edu-brand"
+      (click)="goToDashboard()"
     >
-      Add Enrollment
+      <span class="brand-icon">E</span>
+      <span class="brand-text">EduConnect</span>
     </button>
-  </div>
 
-  <div class="nav-right">
-    <span *ngIf="role === 'STUDENT'" class="welcome-text">
-      {{ studentName || 'Student' }}
-    </span>
+    <div class="edu-nav-links">
+      <button
+        *ngIf="role === 'TEACHER'"
+        type="button"
+        class="edu-nav-link"
+        (click)="goToCourseCreate()"
+      >
+        Add Course
+      </button>
 
-    <span *ngIf="role === 'TEACHER'" class="welcome-text">
-      {{ teacherName || 'Teacher' }}
-    </span>
+      <button
+        type="button"
+        class="edu-nav-link"
+        (click)="goToEnrollment()"
+      >
+        Add Enrollment
+      </button>
+    </div>
 
-    <button type="button" class="logout-btn" (click)="logout()">
-      Logout
-    </button>
+    <div class="edu-nav-right">
+      <span *ngIf="role === 'STUDENT'" class="user-chip">
+        {{ studentName || 'Student' }}
+      </span>
+
+      <span *ngIf="role === 'TEACHER'" class="user-chip">
+        {{ teacherName || 'Teacher' }}
+      </span>
+
+      <button
+        type="button"
+        class="logout-btn"
+        (click)="logout()"
+      >
+        Logout
+      </button>
+    </div>
   </div>
 </nav>

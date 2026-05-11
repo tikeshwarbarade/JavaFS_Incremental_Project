@@ -57,6 +57,9 @@ export class CourseCreateComponent implements OnInit {
           teacherId: teacher.teacherId,
           teacherName: teacher.fullName
         });
+
+        this.courseForm.markAsPristine();
+        this.courseForm.markAsUntouched();
       },
       error: (error: any) => {
         console.error('Failed to load teacher details:', error);
@@ -92,6 +95,7 @@ export class CourseCreateComponent implements OnInit {
       next: () => {
         this.successMessage = 'Course created successfully!';
         this.errorMessage = null;
+
         this.resetFormAfterSuccess();
       },
       error: (error: any) => {
@@ -112,21 +116,35 @@ export class CourseCreateComponent implements OnInit {
       courseName: '',
       description: '',
       teacherId: this.teacherId || 0,
-      teacherName: this.teacherName || ''
+      teacherName: {
+        value: this.teacherName || '',
+        disabled: true
+      }
     });
+
+    this.courseForm.markAsPristine();
+    this.courseForm.markAsUntouched();
+    this.courseForm.updateValueAndValidity();
 
     this.successMessage = null;
     this.errorMessage = null;
   }
 
   resetFormAfterSuccess(): void {
-    this.courseForm.patchValue({
+    this.courseForm.reset({
       courseId: 0,
       courseName: '',
       description: '',
       teacherId: this.teacherId || 0,
-      teacherName: this.teacherName || ''
+      teacherName: {
+        value: this.teacherName || '',
+        disabled: true
+      }
     });
+
+    this.courseForm.markAsPristine();
+    this.courseForm.markAsUntouched();
+    this.courseForm.updateValueAndValidity();
   }
 
   goToDashboard(): void {

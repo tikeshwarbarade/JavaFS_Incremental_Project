@@ -5,7 +5,12 @@
     <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="username">Username:</label>
-        <input id="username" type="text" formControlName="username" />
+
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+        />
 
         <div
           class="error"
@@ -24,7 +29,12 @@
 
       <div class="form-group">
         <label for="password">Password:</label>
-        <input id="password" type="password" formControlName="password" />
+
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+        />
 
         <div
           class="error"
@@ -50,7 +60,12 @@
 
       <div class="form-group">
         <label for="role">Role:</label>
-        <select id="role" formControlName="role" (change)="onRoleChange($event)">
+
+        <select
+          id="role"
+          formControlName="role"
+          (change)="onRoleChange($event)"
+        >
           <option value="">Select Role</option>
           <option value="STUDENT">STUDENT</option>
           <option value="TEACHER">TEACHER</option>
@@ -66,7 +81,12 @@
 
       <div class="form-group">
         <label for="fullName">Full Name:</label>
-        <input id="fullName" type="text" formControlName="fullName" />
+
+        <input
+          id="fullName"
+          type="text"
+          formControlName="fullName"
+        />
 
         <div
           class="error"
@@ -78,7 +98,12 @@
 
       <div class="form-group">
         <label for="contactNumber">Contact Number:</label>
-        <input id="contactNumber" type="text" formControlName="contactNumber" />
+
+        <input
+          id="contactNumber"
+          type="text"
+          formControlName="contactNumber"
+        />
 
         <div
           class="error"
@@ -97,7 +122,12 @@
 
       <div class="form-group">
         <label for="email">Email:</label>
-        <input id="email" type="email" formControlName="email" />
+
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+        />
 
         <div
           class="error"
@@ -117,7 +147,13 @@
       <div *ngIf="selectedRole === 'STUDENT'">
         <div class="form-group">
           <label for="dateOfBirth">Date Of Birth:</label>
-          <input id="dateOfBirth" type="date" formControlName="dateOfBirth" />
+
+          <input
+            id="dateOfBirth"
+            type="date"
+            formControlName="dateOfBirth"
+            [max]="todayDate"
+          />
 
           <div
             class="error"
@@ -125,11 +161,23 @@
           >
             Date of Birth is required.
           </div>
+
+          <div
+            class="error"
+            *ngIf="registrationForm.get('dateOfBirth')?.touched && registrationForm.get('dateOfBirth')?.errors?.['futureDate']"
+          >
+            Date of Birth cannot be in the future.
+          </div>
         </div>
 
         <div class="form-group">
           <label for="address">Address:</label>
-          <input id="address" type="text" formControlName="address" />
+
+          <input
+            id="address"
+            type="text"
+            formControlName="address"
+          />
 
           <div
             class="error"
@@ -143,7 +191,12 @@
       <div *ngIf="selectedRole === 'TEACHER'">
         <div class="form-group">
           <label for="subject">Subject:</label>
-          <input id="subject" type="text" formControlName="subject" />
+
+          <input
+            id="subject"
+            type="text"
+            formControlName="subject"
+          />
 
           <div
             class="error"
@@ -155,6 +208,7 @@
 
         <div class="form-group">
           <label for="yearsOfExperience">Years Of Experience:</label>
+
           <input
             id="yearsOfExperience"
             type="number"
@@ -177,7 +231,9 @@
         </div>
       </div>
 
-      <button type="submit">Register</button>
+      <button type="submit">
+        Register
+      </button>
     </form>
 
     <p class="link-text">
@@ -186,6 +242,7 @@
 
     <div class="toast-message success-toast" *ngIf="showSuccessBox">
       <div class="toast-icon">✓</div>
+
       <div class="toast-content">
         <strong>Success</strong>
         <span>{{ successMessage }}</span>
@@ -194,6 +251,7 @@
 
     <div class="toast-message error-toast" *ngIf="showErrorBox">
       <div class="toast-icon">!</div>
+
       <div class="toast-content">
         <strong>Error</strong>
         <span>{{ errorMessage }}</span>

@@ -2,14 +2,15 @@
 
 <div class="page-wrapper">
   <div class="enrollment-container">
-    <h2>Create Enrollments</h2>
+    <h2>Create Enrollment</h2>
 
     <form [formGroup]="enrollmentForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="courseId">Course:</label>
+        <label for="courseId">Course</label>
 
         <select id="courseId" formControlName="courseId">
           <option value="">Select a Course</option>
+
           <option
             *ngFor="let course of availableCourses"
             [value]="course.courseId"
@@ -27,10 +28,11 @@
       </div>
 
       <div class="form-group" *ngIf="role === 'TEACHER'">
-        <label for="studentId">Student:</label>
+        <label for="studentId">Student</label>
 
         <select id="studentId" formControlName="studentId">
           <option value="">Select a Student</option>
+
           <option
             *ngFor="let student of students"
             [value]="student.studentId"
@@ -48,7 +50,8 @@
       </div>
 
       <div class="form-group" *ngIf="role === 'STUDENT'">
-        <label>Student:</label>
+        <label>Student</label>
+
         <input
           type="text"
           [value]="currentStudentName"
@@ -57,7 +60,7 @@
       </div>
 
       <div class="form-group">
-        <label for="enrollmentDate">Enrollment Date:</label>
+        <label for="enrollmentDate">Enrollment Date</label>
 
         <input
           id="enrollmentDate"
@@ -74,7 +77,9 @@
       </div>
 
       <div class="button-group">
-        <button type="submit">Add Enrollment</button>
+        <button type="submit">
+          Add Enrollment
+        </button>
       </div>
     </form>
 

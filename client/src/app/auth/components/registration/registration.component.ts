@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -17,6 +17,8 @@ export class RegistrationComponent implements OnInit {
   showSuccessBox: boolean = false;
   showErrorBox: boolean = false;
 
+  todayDate: string = new Date().toISOString().split('T')[0];
+
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService
@@ -24,7 +26,14 @@ export class RegistrationComponent implements OnInit {
 
   ngOnInit(): void {
     this.registrationForm = this.formBuilder.group({
-      username: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)]],
+      username: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^[a-zA-Z0-9]+$/)
+        ]
+      ],
+
       password: [
         '',
         [
@@ -33,10 +42,27 @@ export class RegistrationComponent implements OnInit {
           Validators.pattern(/^(?=.*[A-Z])(?=.*[0-9]).{8,}$/)
         ]
       ],
+
       role: ['', Validators.required],
+
       fullName: ['', Validators.required],
-      contactNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      email: ['', [Validators.required, Validators.email]],
+
+      contactNumber: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^\d{10}$/)
+        ]
+      ],
+
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email
+        ]
+      ],
+
       subject: [''],
       yearsOfExperience: [''],
       dateOfBirth: [''],
@@ -59,7 +85,10 @@ export class RegistrationComponent implements OnInit {
     this.registrationForm.get('address')?.setValue('');
 
     if (role === 'TEACHER') {
-      this.registrationForm.get('subject')?.setValidators([Validators.required]);
+      this.registrationForm.get('subject')?.setValidators([
+        Validators.required
+      ]);
+
       this.registrationForm.get('yearsOfExperience')?.setValidators([
         Validators.required,
         Validators.min(1)
@@ -67,8 +96,14 @@ export class RegistrationComponent implements OnInit {
     }
 
     if (role === 'STUDENT') {
-      this.registrationForm.get('dateOfBirth')?.setValidators([Validators.required]);
-      this.registrationForm.get('address')?.setValidators([Validators.required]);
+      this.registrationForm.get('dateOfBirth')?.setValidators([
+        Validators.required,
+        this.notFutureDateValidator
+      ]);
+
+      this.registrationForm.get('address')?.setValidators([
+        Validators.required
+      ]);
     }
 
     this.registrationForm.get('subject')?.updateValueAndValidity();
@@ -159,6 +194,26 @@ export class RegistrationComponent implements OnInit {
     this.registrationForm.get('address')?.updateValueAndValidity();
 
     this.selectedRole = null;
+  }
+
+  private notFutureDateValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) {
+      return null;
+    }
+
+    const selectedDate = new Date(control.value);
+    const today = new Date();
+
+    selectedDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate > today) {
+      return {
+        futureDate: true
+      };
+    }
+
+    return null;
   }
 
   private clearMessages(): void {
