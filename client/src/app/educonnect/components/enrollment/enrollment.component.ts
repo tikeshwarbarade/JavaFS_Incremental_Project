@@ -77,6 +77,9 @@ export class EnrollmentComponent implements OnInit {
           this.enrollmentForm.patchValue({
             studentId: student.studentId
           });
+
+          this.enrollmentForm.markAsPristine();
+          this.enrollmentForm.markAsUntouched();
         },
         error: (error: any) => {
           console.error('Failed to load logged-in student:', error);
@@ -134,25 +137,11 @@ export class EnrollmentComponent implements OnInit {
         this.successMessage = 'Enrollment created successfully!';
         this.errorMessage = null;
 
-        this.enrollmentForm.patchValue({
-          courseId: '',
-          enrollmentDate: ''
-        });
-
-        if (this.role === 'TEACHER') {
-          this.enrollmentForm.patchValue({
-            studentId: ''
-          });
-        }
-
-        if (this.role === 'STUDENT') {
-          this.enrollmentForm.patchValue({
-            studentId: this.studentId
-          });
-        }
+        this.resetFormAfterSuccess();
       },
       error: (error: any) => {
         console.error('Failed to create enrollment:', error);
+
         this.successMessage = null;
         this.errorMessage =
           error?.error?.message ||
@@ -171,6 +160,22 @@ export class EnrollmentComponent implements OnInit {
 
     this.successMessage = null;
     this.errorMessage = null;
+
+    this.enrollmentForm.markAsPristine();
+    this.enrollmentForm.markAsUntouched();
+    this.enrollmentForm.updateValueAndValidity();
+  }
+
+  resetFormAfterSuccess(): void {
+    this.enrollmentForm.reset({
+      courseId: '',
+      studentId: this.role === 'STUDENT' && this.studentId ? this.studentId : '',
+      enrollmentDate: ''
+    });
+
+    this.enrollmentForm.markAsPristine();
+    this.enrollmentForm.markAsUntouched();
+    this.enrollmentForm.updateValueAndValidity();
   }
 
   goToDashboard(): void {
